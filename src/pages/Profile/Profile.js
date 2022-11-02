@@ -89,7 +89,7 @@ const Profile = () => {
             <div className="flex  mt-8  text-gray-800 dark:text-gray-300">
                 <div className="flex items-center text-orange-600">
                     <Icon className="w-5 h-5" aria-hidden="true" icon={HomeIcon} />
-                    <NavLink exact to="/app/dashboard" className="mx-2">
+                    <NavLink exact to="/dashboard" className="mx-2">
                         Kênh người bán
                     </NavLink>
                 </div>
@@ -102,8 +102,8 @@ const Profile = () => {
                     <div className="ml-8 mb-4">
                         <PageTitle>
                             Hồ Sơ Shop
-                            <FormTitle>Xem tình trạng Shop và cập nhật hồ sơ Shop của bạn</FormTitle>
                         </PageTitle>
+                            <FormTitle>Xem tình trạng Shop và cập nhật hồ sơ Shop của bạn</FormTitle>
                     </div>
                     <form onSubmit={AddProductForm.handleSubmit}>
                         <CardBody className="w-4/5 mx-auto">

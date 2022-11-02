@@ -23,6 +23,8 @@ function Layout() {
 
   const user = useSelector(authRemainingSelector);
   const currentUser = user?.login.currentUser;
+  console.log(currentUser);
+
   return (
     <div
       className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${isSidebarOpen && 'overflow-hidden'}`}
@@ -34,18 +36,19 @@ function Layout() {
         <Main>
           <Suspense fallback={<ThemedSuspense />}>
             <Switch>
-              {currentUser? routes.map((route, i) => {
-                return route.component ? (
+              {currentUser ? routes.map((route, i) => {
+                return  (
                   <Route
                     key={i}
                     exact={true}
-                    path={`/app${route.path}`}
+                    path={`${route.path}`}
                     render={(props) => <route.component {...props} />}
                   />
-                ) : null
-              }): <Redirect exact from="/" to="/login" />}
-              <Redirect exact from="/app" to="/app/dashboard" />
-              <Route component={Page404} />
+                ) 
+              }): <Redirect exact to="/" />
+            }
+              <Redirect exact from="/" to="/dashboard" />
+              <Route exact component={Page404} />
             </Switch>
           </Suspense>
         </Main>

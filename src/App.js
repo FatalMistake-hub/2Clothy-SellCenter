@@ -12,18 +12,19 @@ const ForgotPassword = lazy(() => import('./pages/AuthPage/ForgotPassword'));
 function App() {
     const user = useSelector(authRemainingSelector);
     const currentUser = user?.login.currentUser;
-    console.log(currentUser);
+  console.log(currentUser);
+
     return (
         <>
             <Router>
                 <div className="App">
                     {/* <AccessibleNavigationAnnouncer /> */}
                     <Switch>
-                        <Route path="/" component={Login} />
+                        {currentUser ? <Redirect exact from="/" to="/dashboard" /> :''}
+                        <Route exact path="/" component={Login} />
                         {/* <Route path="/login" component={Login} /> */}
-                        <Route path="/create-account" component={CreateAccount} />
-                        <Route path="/forgot-password" component={ForgotPassword} />
-                        {currentUser && <Redirect exact from="/" to="/dashboard" /> }
+                        <Route exact path="/create-account" component={CreateAccount} />
+                        <Route exact path="/forgot-password" component={ForgotPassword} />
 
                         {/* Place new routes over this */}
                         <Route path="/" component={Layout} />

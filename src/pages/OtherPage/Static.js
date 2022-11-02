@@ -38,7 +38,7 @@ const Customers = () => {
             <div className="flex text-gray-800 dark:text-gray-300">
                 <div className="flex items-center text-orange-600">
                     <Icon className="w-5 h-5" aria-hidden="true" icon={HomeIcon} />
-                    <NavLink exact to="/app/dashboard" className="mx-2">
+                    <NavLink exact to="/dashboard" className="mx-2">
                         Kênh người bán
                     </NavLink>
                 </div>
