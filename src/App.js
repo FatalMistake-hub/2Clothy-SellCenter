@@ -21,6 +21,8 @@ function App() {
   return (
     <>
       <Router>
+      <div className="App">
+
         <AccessibleNavigationAnnouncer />
         <Switch>
           <Route path="/login" component={Login} />
@@ -36,6 +38,7 @@ function App() {
           <Route path="/app" component={Layout} />
           {/* If you have an index page, you can remothis Redirect */}
         </Switch>
+        </div>
       </Router>
     </>
   );
