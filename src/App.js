@@ -19,10 +19,11 @@ function App() {
                 <div className="App">
                     <AccessibleNavigationAnnouncer />
                     <Switch>
-                        <Route path="/login" component={Login} />
+                        <Route path="/" component={Login} />
+                        {/* <Route path="/login" component={Login} /> */}
                         <Route path="/create-account" component={CreateAccount} />
                         <Route path="/forgot-password" component={ForgotPassword} />
-                        {currentUser ? <Redirect exact from="/" to="/app/dashboard" /> : <Redirect exact from="/" to="/login" />}
+                        {currentUser && <Redirect exact from="/" to="/app/dashboard" /> }
 
                         {/* Place new routes over this */}
                         <Route path="/app" component={Layout} />
