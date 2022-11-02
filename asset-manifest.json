@@ -13,8 +13,8 @@
     "static/js/5.9f83b57c.chunk.js": "/2Clothy-SellCenter/static/js/5.9f83b57c.chunk.js",
     "static/js/5.9f83b57c.chunk.js.map": "/2Clothy-SellCenter/static/js/5.9f83b57c.chunk.js.map",
     "main.css": "/2Clothy-SellCenter/static/css/main.87710ac8.chunk.css",
-    "main.js": "/2Clothy-SellCenter/static/js/main.e05bfad2.chunk.js",
-    "main.js.map": "/2Clothy-SellCenter/static/js/main.e05bfad2.chunk.js.map",
+    "main.js": "/2Clothy-SellCenter/static/js/main.f88169c8.chunk.js",
+    "main.js.map": "/2Clothy-SellCenter/static/js/main.f88169c8.chunk.js.map",
     "runtime-main.js": "/2Clothy-SellCenter/static/js/runtime-main.6e9a74ce.js",
     "runtime-main.js.map": "/2Clothy-SellCenter/static/js/runtime-main.6e9a74ce.js.map",
     "static/js/8.37ab302c.chunk.js": "/2Clothy-SellCenter/static/js/8.37ab302c.chunk.js",
@@ -57,7 +57,7 @@
     "static/js/26.b08057ad.chunk.js": "/2Clothy-SellCenter/static/js/26.b08057ad.chunk.js",
     "static/js/26.b08057ad.chunk.js.map": "/2Clothy-SellCenter/static/js/26.b08057ad.chunk.js.map",
     "index.html": "/2Clothy-SellCenter/index.html",
-    "precache-manifest.6d042f6bac775aaa38095d6ab41ffd20.js": "/2Clothy-SellCenter/precache-manifest.6d042f6bac775aaa38095d6ab41ffd20.js",
+    "precache-manifest.8a268b8e957d081e01f417a55706893a.js": "/2Clothy-SellCenter/precache-manifest.8a268b8e957d081e01f417a55706893a.js",
     "service-worker.js": "/2Clothy-SellCenter/service-worker.js",
     "static/css/16.9d4d7642.chunk.css.map": "/2Clothy-SellCenter/static/css/16.9d4d7642.chunk.css.map",
     "static/css/main.87710ac8.chunk.css.map": "/2Clothy-SellCenter/static/css/main.87710ac8.chunk.css.map",
@@ -121,6 +121,6 @@
     "static/js/runtime-main.6e9a74ce.js",
     "static/js/8.37ab302c.chunk.js",
     "static/css/main.87710ac8.chunk.css",
-    "static/js/main.e05bfad2.chunk.js"
+    "static/js/main.f88169c8.chunk.js"
   ]
 }

@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f4ac96df75a35d94a89c58c850b623e4",
+    "revision": "370538af58dfdb82560b6c26907cbf69",
     "url": "/2Clothy-SellCenter/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/2Clothy-SellCenter/static/css/16.9d4d7642.chunk.css"
   },
   {
-    "revision": "b5883a6eea8fa1471127",
+    "revision": "fae25ea51f1e7869310b",
     "url": "/2Clothy-SellCenter/static/css/main.87710ac8.chunk.css"
   },
   {
@@ -128,8 +128,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/2Clothy-SellCenter/static/js/9.a6304b3c.chunk.js"
   },
   {
-    "revision": "b5883a6eea8fa1471127",
-    "url": "/2Clothy-SellCenter/static/js/main.e05bfad2.chunk.js"
+    "revision": "fae25ea51f1e7869310b",
+    "url": "/2Clothy-SellCenter/static/js/main.f88169c8.chunk.js"
   },
   {
     "revision": "a3750c1db85a8a799d06",
