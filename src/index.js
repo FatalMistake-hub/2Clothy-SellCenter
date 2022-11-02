@@ -9,9 +9,7 @@ import windmillTheme from "./windmillTheme";
 import { Provider } from 'react-redux';
 import { persistor, store } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
-const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(
+ReactDOM.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
       <SidebarProvider>
