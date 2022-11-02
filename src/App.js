@@ -17,16 +17,16 @@ function App() {
         <>
             <Router>
                 <div className="App">
-                    <AccessibleNavigationAnnouncer />
+                    {/* <AccessibleNavigationAnnouncer /> */}
                     <Switch>
                         <Route path="/" component={Login} />
                         {/* <Route path="/login" component={Login} /> */}
                         <Route path="/create-account" component={CreateAccount} />
                         <Route path="/forgot-password" component={ForgotPassword} />
-                        {currentUser && <Redirect exact from="/" to="/app/dashboard" /> }
+                        {currentUser && <Redirect exact from="/" to="/dashboard" /> }
 
                         {/* Place new routes over this */}
-                        <Route path="/app" component={Layout} />
+                        <Route path="/" component={Layout} />
                         {/* If you have an index page, you can remothis Redirect */}
                     </Switch>
                 </div>
