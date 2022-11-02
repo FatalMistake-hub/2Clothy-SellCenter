@@ -13,13 +13,14 @@ const SingleProduct = lazy(() => import("../pages/Product/SingleProduct"));
 const UpdateProduct = lazy(() => import("../pages/Product/UpdateProduct"));
 const AddProduct = lazy(() => import("../pages/Product/AddProduct"));
 
-const Customers = lazy(() => import("../pages/Profile/Customers"));
 const Chats = lazy(() => import("../pages/Profile/Chats"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
 const Settings = lazy(() => import("../pages/Profile/Settings"));
 
+const Finance = lazy(() => import("../pages/OtherPage/Finance"));
 const Page404 = lazy(() => import("../pages/OtherPage/404"));
 const Blank = lazy(() => import("../pages/OtherPage/Blank"));
+const Static = lazy(() => import("../pages/OtherPage/Static"));
 
 
 const routes = [
@@ -61,8 +62,12 @@ const routes = [
   },
   
   {
-    path: "/customers",
-    component: Customers,
+    path: "/finance",
+    component: Finance,
+  },
+  {
+    path: "/static",
+    component: Static,
   },
   {
     path: "/chats",

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import { NavLink, useParams } from "react-router-dom";
 import Icon from "../../components/Icon";
 import PageTitle from "../../components/Typography/PageTitle";
@@ -6,10 +7,21 @@ import { HomeIcon } from "../../icons";
 import response from "../../utils/demo/productData";
 import { Card, CardBody, Badge, Button, Avatar } from "@windmill/react-ui";
 import { genRating } from "../../utils/genarateRating";
+import * as apiService from "../../services/apiService";
 
 const SingleProduct = () => {
   const { id } = useParams();
+  const [detailResult, setDetailResult] = useState();
 
+  useEffect(() => {
+    const fetchApi = async () => {
+      const result = await apiService.detailProduct(id);
+
+      setDetailResult(result[0]);
+    };
+
+    fetchApi();
+  }, [id]);
   // change view component
   const [tabView, setTabView] = useState("reviews");
   const handleTabView = (viewName) => setTabView(viewName);
@@ -34,48 +46,64 @@ const SingleProduct = () => {
           Tất cả Products
         </NavLink>
         {">"}
-        <p className="mx-2">{product.name}</p>
+        <p className="mx-2">{detailResult?.name}</p>
       </div>
 
       {/* Product overview  */}
       <Card className="my-8 shadow-md">
         <CardBody>
-          <div className="grid grid-col items-center md:grid-cols-2 lg:grid-cols-2">
-            <div>
-              <img src={product?.photo} alt="" className="w-full rounded-lg" />
+          <div className="grid grid-col  items-center md:grid-cols-2 lg:grid-cols-2 ">
+            <div className="flex justify-center">
+              <img
+                src={detailResult?.images[0].path}
+                alt=""
+                className="w-full rounded-lg "
+              />
             </div>
 
-            <div className="mx-8 pt-5 md:pt-0">
+            <div className="mx-8 pt-5 md:pt-0 ">
               <h1 className="text-3xl mb-4 font-semibold text-gray-700 dark:text-gray-200">
-                {product?.name}
+                {detailResult?.name}
               </h1>
 
               <Badge
-                type={product?.qty > 0 ? "success" : "danger"}
+                type={detailResult?.quantity > 0 ? "success" : "danger"}
                 className="mb-2"
               >
                 <p className="break-normal">
-                  {product?.qty > 0 ? `In Stock` : "Out of Stock"}
+                  {detailResult?.quantity > 0 ? `In Stock` : "Out of Stock"}
+                  {/* {detailResult?.quantity}  */}
                 </p>
               </Badge>
 
               <p className="mb-2 text-sm text-gray-800 dark:text-gray-300">
-                {product?.shortDescription}
+                {detailResult?.description}
               </p>
               <p className="mb-3 text-sm text-gray-800 dark:text-gray-300">
-                {product?.featureDescription}
+                {/* {detailResult?.description} */}
               </p>
 
-              <p className="text-sm text-gray-900 dark:text-gray-400">
+              {/* <p className="text-sm text-gray-900 dark:text-gray-400">
                 Product Rating
               </p>
-              <div>{genRating(product.rating, product.reviews.length, 6)}</div>
+              <div>{genRating(detailResult?.rating, product.reviews?.length, 6)}</div> */}
+              <p className="text-sm text-gray-900 dark:text-gray-400 flex">
+                Danh mục : {""}
+                <p> {detailResult?.size}</p>
+              </p>
+              <p className="text-sm text-gray-900 dark:text-gray-400 flex">
+                Size : {""}
+                <p> {detailResult?.size}</p>
+              </p>
 
               <h4 className="mt-4 text-orange-600 text-2xl font-semibold">
-                {product?.price}
+                {detailResult?.price.toLocaleString("es-ES")} ₫
               </h4>
               <p className="text-sm text-gray-900 dark:text-gray-400">
-                Product Quantity : {product?.qty}
+                Product Quantity : {detailResult?.quantity}
+              </p>
+              <p className="text-sm text-gray-900 dark:text-gray-400">
+                dateCreated : {detailResult?.dateCreated.slice(0, 10)}
               </p>
             </div>
           </div>
@@ -91,7 +119,7 @@ const SingleProduct = () => {
               className="mx-5"
               layout="link"
               onClick={() => handleTabView("reviews")}
-            >{`Reviews (${product.reviews.length})`}</Button>
+            >{`Reviews (${product?.reviews.length})`}</Button>
             <Button layout="link" onClick={() => handleTabView("description")}>
               Description
             </Button>
@@ -108,12 +136,12 @@ const SingleProduct = () => {
             {tabView === "reviews" ? (
               <>
                 <p className="text-5xl text-gray-700 dark:text-gray-200">
-                  {product.rating.toFixed(1)}
+                  {product?.rating.toFixed(1)}
                 </p>
-                {genRating(product.rating, product.reviews.length, 6)}
+                {genRating(detailResult?.rating, product?.reviews.length, 6)}
 
                 <div className="mt-4">
-                  {product.reviews.map((review, i) => (
+                  {product?.reviews.map((review, i) => (
                     <div className="flex py-3" key={i}>
                       <Avatar
                         className="hidden mr-3 md:block"
@@ -138,7 +166,7 @@ const SingleProduct = () => {
               <>
                 <div className="px-3">
                   <p className="text-sm text-gray-800 dark:text-gray-300">
-                    {product.londDescription}
+                    {detailResult?.description}
                   </p>
                 </div>
               </>

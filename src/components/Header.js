@@ -57,7 +57,7 @@ function Header() {
       <div className="container flex items-center justify-between h-full px-6 mx-auto text-orange-600 dark:text-orange-300">
         {/* <!-- Mobile hamburger --> */}
         <button
-          className="p-1 mr-5 -ml-1 rounded-md lg:hidden focus:outline-none focus:shadow-outline-orange"
+          className="p-1 mr-5 -ml-1 rounded-md lg:hidden focus:outline-none focus:shadow-outline-orange "
           onClick={toggleSidebar}
           aria-label="Menu"
         >
@@ -164,7 +164,7 @@ function Header() {
                 <OutlineCogIcon className="w-4 h-4 mr-3" aria-hidden="true" />
                 <span>Settings</span>
               </DropdownItem>
-              <DropdownItem onClick={() => handleLogOut}>
+              <DropdownItem onClick={handleLogOut}>
                 <OutlineLogoutIcon
                   className="w-4 h-4 mr-3"
                   aria-hidden="true"

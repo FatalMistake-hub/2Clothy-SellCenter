@@ -1,0 +1,6 @@
+- trang edit + modal thêm sản phẩm vào danh mục của shop
+- xem chi tiết order
+- phân tích bán hàng ( chỉ số )
+- số dư ví ? cài đặt thanh toán,tk ngân hàng ( tài chính )
+- Đánh giá shop , hồ sơ shop (quản lý shop)
+- địa chỉ , tài khoản ( thiết lập shop)

@@ -71,18 +71,11 @@ const ProductsAll = () => {
   }
 
   // Handle list view
-  const handleChangeView = () => {
-    if (view === "list") {
-      setView("grid");
-    }
-    if (view === "grid") {
-      setView("list");
-    }
-  };
+
 
   return (
     <div>
-      <PageTitle>Tất cả Products</PageTitle>
+      <PageTitle>Tất cả đơn hàng</PageTitle>
 
       {/* Breadcum */}
       <div className="flex text-gray-800 dark:text-gray-300">
@@ -93,7 +86,7 @@ const ProductsAll = () => {
           </NavLink>
         </div>
         {">"}
-        <p className="mx-2">Tất cả Products</p>
+        <p className="mx-2">Tất cả đơn hàng</p>
       </div>
 
       {/* Sort */}
@@ -102,7 +95,7 @@ const ProductsAll = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Tất cả Products
+                Tất cả đơn hàng
               </p>
 
               <Label className="mx-3">
@@ -138,14 +131,7 @@ const ProductsAll = () => {
                 </div>
               </Label>
             </div>
-            <div className="">
-              <Button
-                icon={view === "list" ? ListViewIcon : GridViewIcon}
-                className="p-2"
-                aria-label="Edit"
-                onClick={handleChangeView}
-              />
-            </div>
+            
           </div>
         </CardBody>
       </Card>
@@ -190,8 +176,7 @@ const ProductsAll = () => {
       </Modal>
 
       {/* Product Views */}
-      {view === "list" ? (
-        <>
+      
           <TableContainer className="mb-8">
             <Table>
               <TableHeader>
@@ -268,86 +253,7 @@ const ProductsAll = () => {
               />
             </TableFooter>
           </TableContainer>
-        </>
-      ) : (
-        <>
-          {/* Car list */}
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
-            {data.map((product) => (
-              <div className="" key={product.id}>
-                <Card>
-                  <img
-                    className="object-cover w-full"
-                    src={product.photo}
-                    alt="product"
-                  />
-                  <CardBody>
-                    <div className="mb-3 flex items-center justify-between">
-                      <p className="font-semibold truncate  text-gray-600 dark:text-gray-300">
-                        {product.name}
-                      </p>
-                      <Badge
-                        type={product.qty > 0 ? "success" : "danger"}
-                        className="whitespace-nowrap"
-                      >
-                        <p className="break-normal">
-                          {product.qty > 0 ? `In Stock` : "Out of Stock"}
-                        </p>
-                      </Badge>
-                    </div>
-
-                    <p className="mb-2 text-orange-500 font-bold text-lg">
-                      {product.price}
-                    </p>
-
-                    <p className="mb-8 text-gray-600 dark:text-gray-400">
-                      {product.shortDescription}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Link to={`/app/product/${product.id}`}>
-                          <Button
-                            icon={EyeIcon}
-                            className="mr-3"
-                            aria-label="Preview"
-                            size="small"
-                          />
-                        </Link>
-                      </div>
-                      <div>
-                        <Link to={`/app/product/update/${product.id}`}>
-                          <Button
-                            icon={EditIcon}
-                            className="mr-3"
-                            layout="outline"
-                            aria-label="Edit"
-                            size="small"
-                          />
-                        </Link>
-                        <Button
-                          icon={TrashIcon}
-                          layout="outline"
-                          aria-label="Delete"
-                          onClick={() => openModal(product.id)}
-                          size="small"
-                        />
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </div>
-            ))}
-          </div>
-
-          <Pagination
-            totalResults={totalResults}
-            resultsPerPage={resultsPerPage}
-            label="Table navigation"
-            onChange={onPageChange}
-          />
-        </>
-      )}
+        
     </div>
   );
 };

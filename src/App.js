@@ -26,15 +26,15 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/create-account" component={CreateAccount} />
           <Route path="/forgot-password" component={ForgotPassword} />
+          {currentUser ? (
+            <Redirect exact from="/" to="/app/dashboard" />
+            ) : (
+            <Redirect exact from="/" to="/login" />
+          )}
 
           {/* Place new routes over this */}
           <Route path="/app" component={Layout} />
           {/* If you have an index page, you can remothis Redirect */}
-          {currentUser ? (
-            <Redirect exact from="/" to="/login" />
-          ) : (
-            <Redirect exact from="/" to="/app/dashboard" />
-          )}
         </Switch>
       </Router>
     </>

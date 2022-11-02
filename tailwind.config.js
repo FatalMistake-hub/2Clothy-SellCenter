@@ -3,7 +3,15 @@ const windmill = require("@windmill/react-ui/config");
 
 module.exports = windmill({
   mode: "jit",
-  purge: ["src/**/*.js"],
+  purge: ["./src/components/**/*.js", "./src/pages/**/*.js"],
+  // purge: {
+  //   enabled: true,
+  //   content: [
+  //     "./**/**/*.{js,ts,jsx,tsx}",
+  //     "./src/pages/Product/**/*.{js,ts,jsx,tsx}",
+  //   ],
+  // },
+
   theme: {
     extend: {
       fontFamily: {

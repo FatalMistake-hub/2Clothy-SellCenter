@@ -20,5 +20,11 @@ export default {
     base:
       'flex flex-col items-center px-6 py-3 -mx-6 -mb-4 space-y-4 sm:space-y-0 sm:space-x-6 sm:flex-row bg-gray-50 dark:bg-gray-800',
   },
+  input: {
+    
+    active:
+      'focus:border-orange-400 border-gray-300 dark:border-gray-600 focus:ring focus:ring-orange-300 dark:focus:border-gray-600 dark:focus:ring-gray-300 dark:bg-gray-700',
+    
+  },
   
 };

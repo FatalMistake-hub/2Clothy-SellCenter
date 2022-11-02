@@ -1,7 +1,7 @@
 import React from "react";
+import PageTitle from "../../components/Typography/PageTitle";
 import { NavLink } from "react-router-dom";
 import Icon from "../../components/Icon";
-import PageTitle from "../../components/Typography/PageTitle";
 import {
   HomeIcon,
   AddIcon,
@@ -23,8 +23,11 @@ import {
   ModalBody,
   ModalFooter,
 } from "@windmill/react-ui";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import * as apiService from "../../services/apiService";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 const FormTitle = ({ children }) => {
   return (
     <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">
@@ -34,7 +37,7 @@ const FormTitle = ({ children }) => {
 };
 
 const AddProduct = () => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDeleteProduct, setSelectedDeleteProduct] = useState(null);
   async function openModal(productId) {
     // let product = await data.filter((product) => product.id === productId)[0];
@@ -62,21 +65,96 @@ const AddProduct = () => {
 
   const fetchApi2 = async (result) => {
     const data = await apiService.categoriesById(result.id);
-    setSelected(result)
+    setSelected(result);
     setCategories2(data);
   };
   const [categories3, setCategories3] = useState([]);
 
   const fetchApi3 = async (result) => {
     const data = await apiService.categoriesById(result.id);
-    setSelected(result)
+    setSelected(result);
     setCategories3(data);
   };
   const [selected, setSelected] = useState();
 
+  const [images, setImages] = useState([]);
+  const [imageURLS, setImageURLs] = useState([]);
+  useEffect(() => {
+    if (images.length < 1) return;
+    const newImageUrls = [];
+    images.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
+    setImageURLs(newImageUrls);
+  }, [images]);
+  const isValidFileUploaded = (file) => {
+    const validExtensions = ["png", "jpeg", "jpg"];
+    const fileExtension = file.type.split("/")[1];
+
+    return validExtensions.includes(fileExtension);
+  };
+  function onImageChange(e) {
+    const files = e.target.files;
+    let check;
+    for (let i = 0; i < e.target.files.length; i++) {
+      if (isValidFileUploaded(files[i])) {
+        check = true;
+      } else {
+        check = false;
+        break;
+      }
+    }
+    if (files.length < 9 && check) {
+      if (images.concat([...e.target.files]).length <= 9) {
+        const data = images.concat([...e.target.files]);
+        console.log(data);
+        setImages(data);
+      } else {
+        alert("Over the allowed file amount");
+      }
+    } else {
+      alert("File invalid");
+    }
+  }
+  const inputFile = useRef(null);
+  const onDivClick = () => {
+    inputFile.current.click();
+  };
+
+  const [errorResponse, setErrorResponse] = useState("");
+  const AddProductForm = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .required("Bắt buộc!")
+        .matches(
+          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+          "Vui lòng nhập một địa chỉ email hợp lệ!"
+        ),
+      password: Yup.string()
+        .required("Bắt buộc!")
+        .matches(
+          /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
+          "Mật khẩu phải có 7-19 ký tự và chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!"
+        ),
+    }),
+    onSubmit: (values) => {
+      const newUser = {
+        Email: values.email,
+        Password: values.password,
+      };
+      const fetchApi = async () => {
+        // const res = await loginUser(newUser, dispatch, navigate);
+        const res = 1;
+        setErrorResponse(res);
+      };
+      fetchApi();
+    },
+  });
   return (
     <div>
-      <PageTitle>Add New Product</PageTitle>
+      <PageTitle>Thêm Mới Sản Phẩm</PageTitle>
 
       {/* Breadcum */}
       <div className="flex text-gray-800 dark:text-gray-300">
@@ -87,7 +165,7 @@ const AddProduct = () => {
           </NavLink>
         </div>
         {">"}
-        <p className="mx-2">Add new Product</p>
+        <p className="mx-2">Thêm Mới Sản Phẩm</p>
       </div>
 
       <div className="w-full mt-8 grid gap-4 grid-col md:grid-cols-3 ">
@@ -180,13 +258,13 @@ const AddProduct = () => {
                 <span className="ml-1">{selected?.name}</span>
               </div>
               <div className="flex">
-                <div className="ml-4 hidden sm:block">
+                {/* <div className="ml-4 hidden sm:block">
                   <Button layout="outline" onClick={closeModal}>
                     Cancel
                   </Button>
-                </div>
+                </div> */}
                 <div className="ml-4 hidden sm:block">
-                  <Button>Delete</Button>
+                  <Button onClick={closeModal}>Xác nhận</Button>
                 </div>
                 <div className="block w-full sm:hidden">
                   <Button
@@ -208,63 +286,101 @@ const AddProduct = () => {
           </ModalFooter>
         </Modal>
 
-        <Card className="row-span-2 md:col-span-2">
-          <CardBody>
-            <FormTitle>Product Image</FormTitle>
-            <input
-              type="file"
-              className="mb-4 text-gray-800 dark:text-gray-300"
-            />
+        <Card className="row-span-4 md:col-span-4 ">
+          <form onSubmit={AddProductForm.handleSubmit}>
+            <CardBody>
+              <FormTitle>Hình ảnh sản phẩm</FormTitle>
+              <div className="w-full flex flex-wrap">
+                {imageURLS.map((imageSrc, i) => (
+                  <div key={i} className="w-20 h-20 rounded mr-4 mb-4">
+                    <div className="w-full h-full ">
+                      <img
+                        src={imageSrc}
+                        alt="not fount"
+                        className="w-20 h-20 rounded border "
+                      />
+                    </div>
+                  </div>
+                ))}
 
-            <FormTitle>Product Name</FormTitle>
-            <Label>
-              <Input className="mb-4" placeholder="Type product name here" />
-            </Label>
+                <div className="w-20 h-20 rounded mr-4 mb-4  text-center  flex">
+                  <div
+                    onClick={onDivClick}
+                    className="w-full h-full rounded border border-dashed border-slate-600 flex items-center hover:bg-orange-100"
+                  >
+                    <input
+                      type="file"
+                      multiple={true}
+                      className="hidden"
+                      onChange={onImageChange}
+                      ref={inputFile}
+                    />
+                    <div className="flex text-orange-600 flex-col   ">
+                      <div className="h-6">
+                        <i className="w-6 h-6 inline-block fill-current">
+                          <svg
+                            viewBox="0 0 23 21"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path d="M18.5 0A1.5 1.5 0 0 1 20 1.5V12c-.49-.07-1.01-.07-1.5 0V1.5H2v12.65l3.395-3.408a.75.75 0 0 1 .958-.087l.104.087L7.89 12.18l3.687-5.21a.75.75 0 0 1 .96-.086l.103.087 3.391 3.405c.81.813.433 2.28-.398 3.07A5.235 5.235 0 0 0 14.053 18H2a1.5 1.5 0 0 1-1.5-1.5v-15A1.5 1.5 0 0 1 2 0h16.5z"></path>
+                            <path d="M6.5 4.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM18.5 14.25a.75.75 0 0 1 1.5 0v2.25h2.25a.75.75 0 0 1 0 1.5H20v2.25a.75.75 0 0 1-1.5 0V18h-2.25a.75.75 0 0 1 0-1.5h2.25v-2.25z"></path>
+                          </svg>
+                        </i>
+                      </div>
+                      <div className="leading-3 text-xs">
+                        Thêm hình ảnh ({imageURLS.length}/9)
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            <FormTitle>Product Price</FormTitle>
-            <Label>
-              <Input className="mb-4" placeholder="Enter product price here" />
-            </Label>
+              <FormTitle>Tên sản phẩm</FormTitle>
+              <Label>
+                <Input className="mb-4" placeholder="Nhập vào" />
+              </Label>
 
-            <FormTitle>Short description</FormTitle>
-            <Label>
-              <Textarea
-                className="mb-4"
-                rows="3"
-                placeholder="Enter product short description here"
-              />
-            </Label>
+              <FormTitle>Danh mục</FormTitle>
+              <Label>
+                <Input
+                  value={selected?.name}
+                  onClick={() => openModal("1")}
+                  className="mb-4"
+                  placeholder="Chọn danh mục"
+                  readOnly
+                />
+              </Label>
 
-            <FormTitle>Stock Qunatity</FormTitle>
-            <Label>
-              <Input
-                className="mb-4"
-                placeholder="Enter product stock quantity"
-              />
-            </Label>
+              <FormTitle>Size</FormTitle>
+              <Label>
+                <Input className="mb-4" placeholder="Nhập size" />
+              </Label>
+              <FormTitle>Mô tả sản phẩm</FormTitle>
+              <Label>
+                <Textarea
+                  className="mb-4"
+                  rows="6"
+                />
+              </Label>
+              <FormTitle>Giá</FormTitle>
+              <Label>
+                <Input type="number" className="mb-4 " placeholder="Nhập vào" />
+              </Label>
 
-            <FormTitle>Full description</FormTitle>
-            <Label>
-              <Textarea
-                className="mb-4"
-                rows="5"
-                placeholder="Enter product full description here"
-              />
-            </Label>
-
-            <div className="w-full">
-              <Button
-                size="large"
-                iconLeft={AddIcon}
-                onClick={() => openModal("1")}
-              >
-                Add Product
-              </Button>
-            </div>
-          </CardBody>
+              <div className="w-full">
+                <Button
+                  size="large"
+                  iconLeft={AddIcon}
+                  onClick={() => openModal("1")}
+                >
+                  Thêm sản phẩm
+                </Button>
+              </div>
+            </CardBody>
+          </form>
         </Card>
 
-        <Card className="h-48">
+        {/* <Card className="h-48">
           <CardBody>
             <div className="flex mb-8">
               <Button layout="primary" className="mr-3" iconLeft={PublishIcon}>
@@ -284,7 +400,7 @@ const AddProduct = () => {
               </Select>
             </Label>
           </CardBody>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

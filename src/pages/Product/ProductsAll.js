@@ -30,20 +30,20 @@ import {
   ModalBody,
   ModalFooter,
 } from "@windmill/react-ui";
-import response from "../../utils/demo/productData";
+
 import Icon from "../../components/Icon";
 import { genRating } from "../../utils/genarateRating";
-
+import * as apiService from "../../services/apiService";
 const ProductsAll = () => {
   const [view, setView] = useState("grid");
 
   // Table and grid data handlling
   const [page, setPage] = useState(1);
   const [data, setData] = useState([]);
-
+  const [response, setResponse] = useState();
   // pagination setup
   const [resultsPerPage, setResultsPerPage] = useState(10);
-  const totalResults = response.length;
+  const totalResults = response?.length;
 
   // pagination change control
   function onPageChange(p) {
@@ -53,8 +53,16 @@ const ProductsAll = () => {
   // on page change, load new sliced data
   // here you would make another server request for new data
   useEffect(() => {
-    setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
-  }, [page, resultsPerPage]);
+    const fetchApi = async () => {
+      const result = await apiService.getAllItem();
+      console.log(result);
+      setResponse(result)
+    };
+    fetchApi();
+  }, []);
+  useEffect(() => {
+    setData(response?.slice((page - 1) * resultsPerPage, page * resultsPerPage));
+  }, [page, resultsPerPage,response]);
 
   // Delete action model
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -93,7 +101,7 @@ const ProductsAll = () => {
           </NavLink>
         </div>
         {">"}
-        <p className="mx-2">Tất cả Products</p>
+        <p className="mx-2 text-[#ffa400]">Tất cả Products</p>
       </div>
 
       {/* Sort */}
@@ -151,7 +159,11 @@ const ProductsAll = () => {
       </Card>
 
       {/* Delete product model */}
-      <Modal isOpen={isModalOpen} onClose={closeModal} style={{width:'600px'}}>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        style={{ width: "600px" }}
+      >
         <ModalHeader className="flex items-center">
           {/* <div className="flex items-center"> */}
           <Icon icon={TrashIcon} className="w-6 h-6 mr-3" />
@@ -198,37 +210,38 @@ const ProductsAll = () => {
                 <tr>
                   <TableCell>Name</TableCell>
                   <TableCell>Stock</TableCell>
-                  <TableCell>Rating</TableCell>
+                  <TableCell>Size</TableCell>
                   <TableCell>QTY</TableCell>
                   <TableCell>Price</TableCell>
                   <TableCell>Action</TableCell>
                 </tr>
               </TableHeader>
               <TableBody>
-                {data.map((product) => (
+                {data?.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell>
                       <div className="flex items-center text-sm">
                         <Avatar
                           className="hidden mr-4 md:block"
-                          src={product.photo}
+                          src={product.images[0].path}
                           alt="Product image"
                         />
                         <div>
-                          <p className="font-semibold">{product.name}</p>
+                          <p className="font-semibold ">{product.name}</p>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge type={product.qty > 0 ? "success" : "danger"}>
-                        {product.qty > 0 ? "In Stock" : "Out of Stock"}
+                      <Badge type={product.quantity > 0 ? "success" : "danger"}>
+                        {product.quantity > 0 ? "In Stock" : "Out of Stock"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm">
+                    {/* <TableCell className="text-sm">
                       {genRating(product.rating, product.reviews.length, 5)}
-                    </TableCell>
-                    <TableCell className="text-sm">{product.qty}</TableCell>
-                    <TableCell className="text-sm">{product.price}</TableCell>
+                    </TableCell> */}
+                    <TableCell className="text-sm">{product.size}</TableCell>
+                    <TableCell className="text-sm">{product.quantity}</TableCell>
+                    <TableCell className="text-sm">{product.price.toLocaleString('es-ES')} ₫</TableCell>
                     <TableCell>
                       <div className="flex">
                         <Link to={`/app/product/${product.id}`}>
@@ -273,35 +286,35 @@ const ProductsAll = () => {
         <>
           {/* Car list */}
           <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
-            {data.map((product) => (
+            {data?.map((product) => (
               <div className="" key={product.id}>
-                <Card>
+                <Card className="">
                   <img
                     className="object-cover w-full"
-                    src={product.photo}
+                    src={product.images[0].path}
                     alt="product"
                   />
                   <CardBody>
                     <div className="mb-3 flex items-center justify-between">
-                      <p className="font-semibold truncate  text-gray-600 dark:text-gray-300">
+                      <p className="font-semibold max-w-[50%] text-gray-600 dark:text-gray-300">
                         {product.name}
                       </p>
                       <Badge
-                        type={product.qty > 0 ? "success" : "danger"}
-                        className="whitespace-nowrap"
+                        type={product.quantity > 0 ? "success" : "danger"}
+                        className="whitespace-nowrap "
                       >
                         <p className="break-normal">
-                          {product.qty > 0 ? `In Stock` : "Out of Stock"}
+                          {product.quantity > 0 ? `In Stock` : "Out of Stock"}
                         </p>
                       </Badge>
                     </div>
 
                     <p className="mb-2 text-orange-500 font-bold text-lg">
-                      {product.price}
+                      {product.price.toLocaleString('es-ES')} ₫
                     </p>
 
                     <p className="mb-8 text-gray-600 dark:text-gray-400">
-                      {product.shortDescription}
+                      {product.description}
                     </p>
 
                     <div className="flex items-center justify-between">

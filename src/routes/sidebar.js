@@ -48,7 +48,7 @@ const routes = [
     ],
   },
   {
-    path: "/app/customers",
+    path: "/app/static",
     icon: "StatIcon",
     name: "Chỉ số",
   },

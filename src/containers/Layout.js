@@ -43,7 +43,7 @@ function Layout() {
                     render={(props) => <route.component {...props} />}
                   />
                 ) : null
-              }): ''}
+              }): <Redirect exact from="/" to="/login" />}
               <Redirect exact from="/app" to="/app/dashboard" />
               <Route component={Page404} />
             </Switch>
