@@ -76,17 +76,8 @@ export const allShopProducts = async (id) => {
 };
 
 
-export const post = async (keyword,data={}) => {
-    try {
-        const res = await httpRequest.post('post', {
-            firstname: data.firstname,
-            lastName: data.lastName,
-        });
-        return res.data;
-    } catch (error) {
-        console.log(error);
-    }
-};
+
+
 export const put = async (keyword,data={}) => {
     try {
         const res = await httpRequest.put('put', {

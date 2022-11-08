@@ -27,6 +27,7 @@ import {
 import Icon from '../../components/Icon';
 import { genRating } from '../../utils/genarateRating';
 import * as apiService from '../../services/apiService';
+import ProductIcon from '../../components/ProductIcon';
 const ProductsAll = () => {
     const [view, setView] = useState('grid');
 
@@ -106,7 +107,7 @@ const ProductsAll = () => {
 
                             <Label className="mx-3">
                                 <Select className="py-3">
-                                    <option>Sort by</option>
+                                    <option>Sắp xếp theo </option>
                                     <option>Asc</option>
                                     <option>Desc</option>
                                 </Select>
@@ -159,11 +160,6 @@ const ProductsAll = () => {
                 </ModalHeader>
                 <ModalBody>Make sure you want to delete product {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`}</ModalBody>
                 <ModalFooter>
-                    {/* I don't like this approach. Consider passing a prop to ModalFooter
-                     * that if present, would duplicate the buttons in a way similar to this.
-                     * Or, maybe find some way to pass something like size="large md:regular"
-                     * to Button
-                     */}
                     <div className="hidden sm:block">
                         <Button layout="outline" onClick={closeModal}>
                             Cancel
@@ -205,7 +201,7 @@ const ProductsAll = () => {
                                     <TableRow key={product.id}>
                                         <TableCell>
                                             <div className="flex items-center text-sm">
-                                                <Avatar className="hidden mr-4 md:block" src={product.images[0].path} alt="Product image" />
+                                                <ProductIcon className="hidden mr-4 md:block" src={product.images[0].path} alt="Product image" />
                                                 <div>
                                                     <p className="font-semibold ">{product.name}</p>
                                                 </div>

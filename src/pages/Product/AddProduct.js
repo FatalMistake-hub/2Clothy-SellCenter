@@ -22,7 +22,6 @@ const AddProduct = () => {
         // setSelectedDeleteProduct(product);
         setIsModalOpen(true);
     }
-
     function closeModal() {
         setIsModalOpen(false);
     }
@@ -31,27 +30,22 @@ const AddProduct = () => {
     useEffect(() => {
         const fetchApi = async () => {
             const result = await apiService.allCategories();
-
             setCategoriesResult(result);
         };
-
         fetchApi();
     }, []);
-
     const [categories2, setCategories2] = useState([]);
-
     const fetchApi2 = async (result) => {
         const data = await apiService.categoriesById(result.id);
-        setSelected(result);
+        // setSelected(result);
+        // AddProductForm.values.CategoryId = result;
         setCategories2(data);
     };
-    const [categories3, setCategories3] = useState([]);
-
-    const fetchApi3 = async (result) => {
-        const data = await apiService.categoriesById(result.id);
+    const fetchApi3 = (result) => {
         setSelected(result);
-        setCategories3(data);
+        AddProductForm.values.CategoryId = result;
     };
+
     const [selected, setSelected] = useState();
 
     const [images, setImages] = useState([]);
@@ -59,6 +53,10 @@ const AddProduct = () => {
     useEffect(() => {
         if (images.length < 1) return;
         const newImageUrls = [];
+
+        AddProductForm.values.Paths=images
+        console.log(AddProductForm.values.Paths)
+
         images.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
         setImageURLs(newImageUrls);
     }, [images]);
@@ -82,7 +80,6 @@ const AddProduct = () => {
         if (files.length < 9 && check) {
             if (images.concat([...e.target.files]).length <= 9) {
                 const data = images.concat([...e.target.files]);
-                console.log(data);
                 setImages(data);
             } else {
                 alert('Over the allowed file amount');
@@ -99,31 +96,41 @@ const AddProduct = () => {
     const [errorResponse, setErrorResponse] = useState('');
     const AddProductForm = useFormik({
         initialValues: {
-            email: '',
-            password: '',
+            CategoryId: null,
+            // ShopId: null,
+            Name: '',
+            Price: null,
+            Description: '',
+            Size: '',
+            // Quantity: null,
+            Paths: [],
         },
         validationSchema: Yup.object({
-            email: Yup.string()
-                .required('Bắt buộc!')
-                .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Vui lòng nhập một địa chỉ email hợp lệ!'),
-            password: Yup.string()
-                .required('Bắt buộc!')
-                .matches(
-                    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
-                    'Mật khẩu phải có 7-19 ký tự và chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!',
-                ),
+            // CategoryId: Yup.string().required('Bắt buộc!'),
+            // Name: Yup.string().required('Bắt buộc!'),
+            // Price: Yup.string().required('Bắt buộc!'),
+            // Description: Yup.string().required('Bắt buộc!'),
+            // Size: Yup.string().required('Bắt buộc!'),
+            // Quantity: Yup.string().required('Bắt buộc!'),
+            // Paths: Yup.string().required('Bắt buộc!'),
         }),
         onSubmit: (values) => {
-            const newUser = {
-                Email: values.email,
-                Password: values.password,
+            const newProduct = {
+                CategoryId: values.CategoryId.id,
+                Name: values.Name,
+                Price: values.Price,
+                Description: values.Description,
+                Size: values.Size,
+                // Quantity: null,
+                Paths: values.Paths,
             };
-            const fetchApi = async () => {
-                // const res = await loginUser(newUser, dispatch, navigate);
-                const res = 1;
-                setErrorResponse(res);
-            };
-            fetchApi();
+            console.log("submit",newProduct);
+            // const fetchApi = async () => {
+            //     // const res = await loginUser(newUser, dispatch, navigate);
+            //     const res = 1;
+            //     setErrorResponse(res);
+            // };
+            // fetchApi();
         },
     });
     return (
@@ -179,35 +186,9 @@ const AddProduct = () => {
                                                     onClick={() => fetchApi3(result)}
                                                 >
                                                     <p className="text-sm font-semibold leading-8 text-ellipsis">{result.name}</p>
-                                                    {/* <div className="flex item-center ">
-                            <Icon
-                              className="w-5 h-5"
-                              aria-hidden="true"
-                              icon={RightArrow}
-                            />
-                          </div> */}
                                                 </li>
                                             ))}
                                         </ul>
-                                        {/* <ul className=" h-80 flex-1">
-                    {categories3?.map((result, i) => (
-                        <li
-                          key={result.id}
-                          className="my-2 flex justify-between leading-8 items-center px-4 "
-                        >
-                          <p className="text-sm font-semibold leading-8 text-ellipsis">
-                            {result.name}
-                          </p>
-                          <div className="flex item-center ">
-                            <Icon
-                              className="w-5 h-5"
-                              aria-hidden="true"
-                              icon={RightArrow}
-                            />
-                          </div>
-                        </li>
-                      ))}
-                    </ul> */}
                                     </div>
                                 </div>
                             </div>
@@ -220,23 +201,13 @@ const AddProduct = () => {
                                 <span className="ml-1">{selected?.name}</span>
                             </div>
                             <div className="flex">
-                                {/* <div className="ml-4 hidden sm:block">
-                  <Button layout="outline" onClick={closeModal}>
-                    Cancel
-                  </Button>
-                </div> */}
+                                <div className="ml-4 ">
+                                    <Button block layout="outline" onClick={closeModal}>
+                                        HUỷ
+                                    </Button>
+                                </div>
                                 <div className="ml-4 hidden sm:block">
                                     <Button onClick={closeModal}>Xác nhận</Button>
-                                </div>
-                                <div className="block w-full sm:hidden">
-                                    <Button block size="large" layout="outline" onClick={closeModal}>
-                                        Cancel
-                                    </Button>
-                                </div>
-                                <div className="block w-full sm:hidden">
-                                    <Button block size="large">
-                                        Delete
-                                    </Button>
                                 </div>
                             </div>
                         </div>
@@ -261,7 +232,16 @@ const AddProduct = () => {
                                         onClick={onDivClick}
                                         className="w-full h-full rounded border border-dashed border-slate-600 flex items-center hover:bg-orange-100"
                                     >
-                                        <input type="file" multiple={true} className="hidden" onChange={onImageChange} ref={inputFile} />
+                                        <input
+                                            id="Paths"
+                                            name="Paths"
+                                            // value={AddProductForm.values.Paths}
+                                            type="file"
+                                            multiple={true}
+                                            className="hidden"
+                                            onChange={onImageChange}
+                                            ref={inputFile}
+                                        />
                                         <div className="flex text-orange-600 flex-col   ">
                                             <div className="h-6">
                                                 <i className="w-6 h-6 inline-block fill-current">
@@ -276,66 +256,74 @@ const AddProduct = () => {
                                     </div>
                                 </div>
                             </div>
-
                             <FormTitle>Tên sản phẩm</FormTitle>
                             <Label>
-                                <Input className="mb-4" placeholder="Nhập vào" />
+                                <Input
+                                    id="Name"
+                                    name="Name"
+                                    value={AddProductForm.values.Name}
+                                    onChange={AddProductForm.handleChange}
+                                    className="mb-4"
+                                    placeholder="Nhập vào"
+                                />
                             </Label>
-
                             <FormTitle>Danh mục</FormTitle>
                             <Label>
                                 <Input
-                                    value={selected?.name}
+                                    id="CategoryId"
+                                    name="CategoryId"
+                                    value={AddProductForm.values.CategoryId?.name}
+                                    onChange={AddProductForm.handleChange}
+                                    // value={selected?.name}
                                     onClick={() => openModal('1')}
                                     className="mb-4"
                                     placeholder="Chọn danh mục"
                                     readOnly
                                 />
                             </Label>
-
                             <FormTitle>Size</FormTitle>
                             <Label>
-                                <Input className="mb-4" placeholder="Nhập size" />
+                                <Input
+                                    id="Size"
+                                    name="Size"
+                                    value={AddProductForm.values.Size}
+                                    onChange={AddProductForm.handleChange}
+                                    className="mb-4"
+                                    placeholder="Nhập size"
+                                />
                             </Label>
                             <FormTitle>Mô tả sản phẩm</FormTitle>
                             <Label>
-                                <Textarea className="mb-4" rows="6" />
+                                <Textarea
+                                    id="Description"
+                                    name="Description"
+                                    value={AddProductForm.values.Description}
+                                    onChange={AddProductForm.handleChange}
+                                    className="mb-4"
+                                    rows="6"
+                                />
                             </Label>
                             <FormTitle>Giá</FormTitle>
                             <Label>
-                                <Input type="number" className="mb-4 " placeholder="Nhập vào" />
+                                <Input
+                                    id="Price"
+                                    name="Price"
+                                    value={AddProductForm.values.Price}
+                                    onChange={AddProductForm.handleChange}
+                                    type="number"
+                                    className="mb-4 "
+                                    placeholder="Nhập vào"
+                                />
                             </Label>
 
                             <div className="w-full">
-                                <Button size="large" iconLeft={AddIcon} onClick={() => openModal('1')}>
+                                <Button type="submit" size="large" iconLeft={AddIcon}>
                                     Thêm sản phẩm
                                 </Button>
                             </div>
                         </CardBody>
                     </form>
                 </Card>
-
-                {/* <Card className="h-48">
-          <CardBody>
-            <div className="flex mb-8">
-              <Button layout="primary" className="mr-3" iconLeft={PublishIcon}>
-                Publish
-              </Button>
-              <Button layout="link" iconLeft={StoreIcon}>
-                Save as Draft
-              </Button>
-            </div>
-            <Label className="mt-4">
-              <FormTitle>Select Product Category</FormTitle>
-              <Select className="mt-1">
-                <option>Electronic</option>
-                <option>Fashion</option>
-                <option>Cosmatics</option>
-                <option>Food and Meal</option>
-              </Select>
-            </Label>
-          </CardBody>
-        </Card> */}
             </div>
         </div>
     );

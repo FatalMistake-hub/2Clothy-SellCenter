@@ -48,3 +48,16 @@ export const logOutUser = async (dispatch, history, id = '1', accessToken, axios
         console.log(error, AuthSlice.actions.logOutFailed());
     }
 };
+export const addCategory = async ( data, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.post('category', data, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+

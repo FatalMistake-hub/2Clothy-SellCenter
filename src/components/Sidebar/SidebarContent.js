@@ -13,8 +13,8 @@ function Icon({ icon, ...props }) {
 
 function SidebarContent() {
   return (
-    <div className=" py-2 my-2 text-gray-500 dark:text-gray-400">
-      <div className="flex items-center text-gray">
+    <div className="  text-gray-500 dark:text-gray-400">
+      <div className="flex py-2 mb-2 items-center w-full text-gray shadow-bottom">
         <img
                 aria-hidden="true"
                 className="object-contain w-12 h-12 ml-4 dark:hidden"

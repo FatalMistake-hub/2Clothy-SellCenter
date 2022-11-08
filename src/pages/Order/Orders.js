@@ -13,21 +13,21 @@ function Icon({ icon, ...props }) {
 const Orders = () => {
     // pagination setup
     const [resultsPerPage, setResultPerPage] = useState(10);
-    const [filter, setFilter] = useState('all');
+    const [filter, setFilter] = useState('Tất cả');
 
     const handleFilter = (filter_name) => {
         // console.log(filter_name);
         if (filter_name == 'Tất cả') {
-            setFilter('all');
+            setFilter('Tất cả');
         }
         if (filter_name == 'Chưa thanh toán') {
-            setFilter('un-paid');
+            setFilter('Chưa thanh toán');
         }
         if (filter_name == 'Đã thanh toán') {
-            setFilter('paid');
+            setFilter('Đã thanh toán');
         }
         if (filter_name == 'Hoàn thành') {
-            setFilter('completed');
+            setFilter('Hoàn thành');
         }
     };
 
@@ -50,10 +50,10 @@ const Orders = () => {
             {/* Sort */}
             <Card className="mt-5 mb-5 shadow-md">
                 <CardBody>
-                    <div className="flex items-center">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">Lọc đơn hàng</p>
+                    <div className="flex items-center ">
 
-                        <Label className="mx-3">
+                        <Label className="mx-3 flex items-center ">
+                        <p className="text-sm w-full  text-gray-600 dark:text-gray-400">Lọc đơn hàng</p>
                             <Select className="py-3" onChange={(e) => handleFilter(e.target.value)}>
                                 <option>Tất cả</option>
                                 <option>Chưa thanh toán</option>
@@ -62,19 +62,26 @@ const Orders = () => {
                             </Select>
                         </Label>
 
-                        <Label className="">
+                        <Label className="mx-3 flex items-center">
                             {/* <!-- focus-within sets the color for the icon when input is focused --> */}
-                            <div className="relative text-gray-500 focus-within:text-orange-600 dark:focus-within:text-orange-400">
+                        <p className="text-sm w-full text-gray-600 dark:text-gray-400">Ngày đặt hàng</p>
+                        <Select className="py-3" onChange={(e) => handleFilter(e.target.value)}>
+                                <option>Tất cả</option>
+                                <option>Chưa thanh toán</option>
+                                <option>Đã thanh toán</option>
+                                <option>Hoàn thành</option>
+                            </Select>
+                            {/* <div className="relative text-gray-500 focus-within:text-orange-600 dark:focus-within:text-orange-400">
                                 <input
                                     className="py-3 pr-5 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:focus:shadow-outline-gray form-input"
                                     value={resultsPerPage}
                                     onChange={(e) => setResultPerPage(e.target.value)}
                                 />
-                                <div className="absolute inset-y-0 right-0 flex items-center mr-3 pointer-events-none">
+                                <div className="absolute inset-y-0 right-0 flex items-center mr-3 pointer-events-none"> */}
                                     {/* <SearchIcon className="w-5 h-5" aria-hidden="true" /> */}
-                                    Results on Table
-                                </div>
-                            </div>
+                                    {/* Results on Table */}
+                                {/* </div>
+                            </div> */}
                         </Label>
                     </div>
                 </CardBody>

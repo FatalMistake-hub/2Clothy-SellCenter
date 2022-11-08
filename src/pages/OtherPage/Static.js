@@ -54,7 +54,7 @@ const Customers = () => {
 
                             <Label className="mx-3">
                                 <Select className="py-3">
-                                    <option>Sort by</option>
+                                    <option>Sắp xếp theo </option>
                                     <option>Asc</option>
                                     <option>Desc</option>
                                 </Select>

@@ -16,6 +16,7 @@ import response from '../utils/demo/ordersData';
 import { EyeIcon } from '../icons';
 import ordersData from '../utils/demo/ordersData';
 import { Link, NavLink } from 'react-router-dom';
+import ProductIcon from './ProductIcon';
 
 const OrdersTable = ({ resultsPerPage, filter, path }) => {
     const [page, setPage] = useState(1);
@@ -32,18 +33,18 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
     // here you would make another server request for new data
     useEffect(() => {
         // If Filters Applied
-        if (filter === 'paid') {
+        if (filter === 'Đã thanh toán') {
             setData(response.filter((order) => order.status === 'Paid').slice((page - 1) * resultsPerPage, page * resultsPerPage));
         }
-        if (filter === 'un-paid') {
+        if (filter === 'Chưa thanh toán') {
             setData(response.filter((order) => order.status === 'Un-paid').slice((page - 1) * resultsPerPage, page * resultsPerPage));
         }
-        if (filter === 'completed') {
+        if (filter === 'Hoàn thành') {
             setData(response.filter((order) => order.status === 'Completed').slice((page - 1) * resultsPerPage, page * resultsPerPage));
         }
 
         // if filters dosent applied
-        if (filter === 'all' || !filter) {
+        if (filter === 'Tất cả' || !filter) {
             setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
         }
     }, [page, resultsPerPage, filter]);
@@ -55,12 +56,12 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                 <Table>
                     <TableHeader>
                         <tr>
-                            <TableCell>Client</TableCell>
-                            <TableCell>Order ID</TableCell>
-                            <TableCell>Amount</TableCell>
-                            <TableCell>Status</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Action</TableCell>
+                            <TableCell>Sản phẩm</TableCell>
+                            <TableCell>Mã đơn hàng</TableCell>
+                            <TableCell>Tổng Đơn hàng</TableCell>
+                            <TableCell>Trạng thái </TableCell>
+                            <TableCell>Hạn xác nhận</TableCell>
+                            <TableCell>Thao tác</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
@@ -68,7 +69,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                             <TableRow key={i}>
                                 <TableCell>
                                     <div className="flex items-center text-sm">
-                                        <Avatar className="hidden mr-3 md:block" src={user.avatar} alt="User image" />
+                                        <ProductIcon className="hidden mr-3 md:block" src={user.avatar} alt="User image" />
                                         <div>
                                             <p className="font-semibold">{user.name}</p>
                                         </div>
@@ -78,7 +79,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                     <span className="text-sm">#000{i}</span>
                                 </TableCell>
                                 <TableCell>
-                                    <span className="text-sm">$ {user.amount}</span>
+                                    <span className="text-sm">{user.amount} ₫</span>
                                 </TableCell>
                                 <TableCell>
                                     <Badge
@@ -99,10 +100,13 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                     <span className="text-sm">{new Date(user.date).toLocaleDateString()}</span>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex">
-                                        <Link to={`/${path}/${i}`}>
-                                            <Button icon={EyeIcon} className="mr-3" aria-label="Preview" />
-                                        </Link>
+                                    <div className="flex flex-col  justify-between">
+                                        <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xem chi tiết</span>
+                                        <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xác nhận</span>
+
+                                        <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Huỷ</span>
+
+                                        {/* <span icon={EyeIcon} className="my-2" aria-label="Preview">Đang giao</span> */}
                                     </div>
                                 </TableCell>
                             </TableRow>

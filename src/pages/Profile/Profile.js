@@ -17,7 +17,11 @@ const Profile = () => {
     useEffect(() => {
         if (images.length < 1) return;
         const newImageUrls = [];
-        images.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
+        console.log(images);
+        images.forEach((image) => {
+            console.log(image);
+            newImageUrls.push(URL.createObjectURL(image));
+        });
         setImageURLs(newImageUrls);
     }, [images]);
     const isValidFileUploaded = (file) => {
@@ -40,7 +44,7 @@ const Profile = () => {
         if (files.length < 9 && check) {
             if (images.concat([...e.target.files]).length <= 9) {
                 const data = images.concat([...e.target.files]);
-                console.log(data);
+
                 setImages(data);
             } else {
                 alert('Over the allowed file amount');
@@ -53,6 +57,34 @@ const Profile = () => {
     const onDivClick = () => {
         inputFile.current.click();
     };
+    //Logo
+    const inputFileLogo = useRef(null);
+    const onDivClickLogo = () => {
+        inputFileLogo.current.click();
+    };
+    const [imagesLogo, setImagesLogo] = useState('');
+    const [imageURLSLogo, setImageURLsLogo] = useState('https://cf.shopee.vn/file/72443418d390c42dd6342d7a010532d1');
+    useEffect(() => {
+        if (typeof imagesLogo !== 'string') {
+            console.log('set', imagesLogo[0]);
+            setImageURLsLogo(URL.createObjectURL(imagesLogo[0]));
+        }
+    }, [imagesLogo]);
+    const isValidFileUploadedLogo = (file) => {
+        const validExtensions = ['png', 'jpeg', 'jpg'];
+        const fileExtension = file.type.split('/')[1];
+        return validExtensions.includes(fileExtension);
+    };
+    function onImageLogoChange(e) {
+        const files = e.target.files;
+        if (isValidFileUploadedLogo(files[0])) {
+            setImagesLogo(files);
+        } else {
+            alert('File invalid');
+        }
+
+    }
+    
     const [errorResponse, setErrorResponse] = useState('');
     const AddProductForm = useFormik({
         initialValues: {
@@ -100,16 +132,33 @@ const Profile = () => {
             <div className="w-full mt-8 grid gap-4 grid-col  ">
                 <Card className="row-span-4 md:col-span-4 ">
                     <div className="ml-8 mb-4">
-                        <PageTitle>
-                            Hồ Sơ Shop
-                        </PageTitle>
-                            <FormTitle>Xem tình trạng Shop và cập nhật hồ sơ Shop của bạn</FormTitle>
+                        <PageTitle>Hồ Sơ Shop</PageTitle>
+                        <FormTitle>Xem tình trạng Shop và cập nhật hồ sơ Shop của bạn</FormTitle>
                     </div>
                     <form onSubmit={AddProductForm.handleSubmit}>
                         <CardBody className="w-4/5 mx-auto">
                             <FormTitle>Tên shop</FormTitle>
                             <Label>
-                                <Input className="mb-4" placeholder="Nhập vào" />
+                                <Input className="mb-4" placeholder="Tên shop" />
+                            </Label>
+                            <FormTitle>Số điện thoại</FormTitle>
+                            <Label>
+                                <Input className="mb-4" placeholder="Nhập số điện thoại" type="number"/>
+                            </Label>
+                            <FormTitle>Shop logo</FormTitle>
+
+                            <div className="w-32 h-32 relative  rounded mr-4 mb-4  text-center  flex" onClick={onDivClickLogo}>
+                                <div className="w-full h-full   flex items-center">
+                                    <input type="file" className="hidden" onChange={onImageLogoChange} ref={inputFileLogo} />
+                                    <img src={imageURLSLogo} alt="" className="rounded" />
+                                </div>
+                                <div className=" rounded-b absolute bottom-0 w-full h-6 text-medium leading-6 bg-gray-700 opacity-75 hover:bg-gray-500 text-white text-center cursor-pointer">
+                                    Sửa
+                                </div>
+                            </div>
+                            <FormTitle>Địa chỉ</FormTitle>
+                            <Label>
+                                <Textarea className="mb-4" rows="3" placeholder="Nhập thông tin địa chỉ của shop bạn vào đây" />
                             </Label>
                             <FormTitle>Banner shop</FormTitle>
 
@@ -142,12 +191,10 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
-
                             <FormTitle>Mô tả shop</FormTitle>
                             <Label>
-                                <Textarea className="mb-4" rows="6" />
+                                <Textarea className="mb-4" rows="6" placeholder="Nhập mô tả hoặc thông tin của shop bạn vào đây"/>
                             </Label>
-
                             <div className="w-full">
                                 <Button size="large" iconLeft={AddIcon}>
                                     Lưu

@@ -7,6 +7,7 @@ const Orders = lazy(() => import("../pages/Order/Orders"));
 const DetailOrders = lazy(() => import("../pages/Order/DetailOrder"));
 
 const CategoryAll = lazy(() => import("../pages/Category/CategoryAll"));
+const DetailCategory = lazy(() => import("../pages/Category/DetailCategory"));
 
 const ProductsAll = lazy(() => import("../pages/Product/ProductsAll"));
 const SingleProduct = lazy(() => import("../pages/Product/SingleProduct"));
@@ -37,17 +38,18 @@ const routes = [
     component: DetailOrders,
   },
   {
-    path: "/all-products",
-    component: ProductsAll,
-  },
-  {
-    path: "/add-product",
-    component: AddProduct,
-  },
-  {
     path: "/all-categories",
     component: CategoryAll,
   },
+  {
+    path: "/categories/:id",
+    component: DetailCategory,
+  },
+  {
+    path: "/all-products",
+    component: ProductsAll,
+  },
+  
   {
     path: "/add-product",
     component: AddProduct,

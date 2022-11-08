@@ -15,7 +15,7 @@ const refreshToken = async (token) => {
     }
 };
 
-export const createAxios = (user, dispatch, stateSuccess) => {
+export const createInstance = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create({ baseURL: process.env.REACT_APP_BASE_URL });
     newInstance.interceptors.request.use(
         async (config) => {
