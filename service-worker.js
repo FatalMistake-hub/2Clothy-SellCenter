@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/2Clothy-SellCenter/precache-manifest.81a04573a4f53321700d336b9100e059.js"
+  "/2Clothy-SellCenter/precache-manifest.b9d1c014220cc2431f6467d0211b9c26.js"
 );
 
 self.addEventListener('message', (event) => {
