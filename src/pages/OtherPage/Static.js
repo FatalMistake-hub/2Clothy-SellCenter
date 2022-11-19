@@ -171,9 +171,9 @@ const Customers = () => {
                                 </div>
                             </div>
                         </div>
-                        <ChartCard title="User Details" className="max-h-96">
+                        <ChartCard title="User Details"  >
                             <Line {...lineOptions} />
-                            <ChartLegend legends={lineLegends} />
+                            {/* <ChartLegend legends={lineLegends} /> */}
                         </ChartCard>
 
                         {/* <ChartCard title="Online Visitors">

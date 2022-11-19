@@ -23,7 +23,6 @@ function Layout() {
 
   const user = useSelector(authRemainingSelector);
   const currentUser = user?.login.currentUser;
-  console.log(currentUser);
 
   return (
     <div

@@ -65,13 +65,13 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {data.map((user, i) => (
+                        {data.map((order, i) => (
                             <TableRow key={i}>
                                 <TableCell>
                                     <div className="flex items-center text-sm">
-                                        <ProductIcon className="hidden mr-3 md:block" src={user.avatar} alt="User image" />
+                                        <ProductIcon className="hidden mr-3 md:block" src={order.avatar} alt="User image" />
                                         <div>
-                                            <p className="font-semibold">{user.name}</p>
+                                            <p className="font-semibold">{order.name}</p>
                                         </div>
                                     </div>
                                 </TableCell>
@@ -79,29 +79,29 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                     <span className="text-sm">#000{i}</span>
                                 </TableCell>
                                 <TableCell>
-                                    <span className="text-sm">{user.amount} ₫</span>
+                                    <span className="text-sm">{order.amount} ₫</span>
                                 </TableCell>
                                 <TableCell>
                                     <Badge
                                         type={
-                                            user.status === 'Un-paid'
+                                            order.status === 'Un-paid'
                                                 ? 'danger'
-                                                : user.status === 'Paid'
+                                                : order.status === 'Paid'
                                                 ? 'success'
-                                                : user.status === 'Completed'
+                                                : order.status === 'Completed'
                                                 ? 'warning'
                                                 : 'neutral'
                                         }
                                     >
-                                        {user.status}
+                                        {order.status}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <span className="text-sm">{new Date(user.date).toLocaleDateString()}</span>
+                                    <span className="text-sm">{new Date(order.date).toLocaleDateString()}</span>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex flex-col  justify-between">
-                                        <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xem chi tiết</span>
+                                        <Link to={`/ordersDetail`} ><span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xem chi tiết</span></Link>
                                         <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xác nhận</span>
 
                                         <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Huỷ</span>

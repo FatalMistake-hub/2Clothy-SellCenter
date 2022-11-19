@@ -29,7 +29,6 @@ export const registerUser = async (user, dispatch, history) => {
         return res.data;
     } catch (error) {
         dispatch(AuthSlice.actions.registerFailed());
-        console.error('error', error.response.data);
         return error.response.data;
     }
 };
@@ -45,10 +44,10 @@ export const logOutUser = async (dispatch, history, id = '1', accessToken, axios
         return res.data;
     } catch (error) {
         dispatch(AuthSlice.actions.logOutFailed());
-        console.log(error, AuthSlice.actions.logOutFailed());
+        return error.response.data;
     }
 };
-export const addCategory = async ( data, accessToken, axiosJWT) => {
+export const addCategory = async (data, accessToken, axiosJWT) => {
     try {
         const res = await axiosJWT.post('category', data, {
             headers: { Authorization: `Bearer ${accessToken}` },
@@ -60,4 +59,83 @@ export const addCategory = async ( data, accessToken, axiosJWT) => {
         return error.response.data;
     }
 };
+export const deleteCategory = async (id, history, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.delete(`item/${id}`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
 
+        // history.push('/all-products');
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+export const addProduct = async (data, history, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.post('item', data, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        history.push('/all-products');
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+export const addProductCategoryShop = async (data, history, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.post('item/more', data, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        // history.push('/all-products');
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+export const updateProduct = async (data, history, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.put('item', data, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        history.push('/all-products');
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+export const deleteProduct = async (id, history, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.delete(`item/${id}`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        // history.push('/all-products');
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+
+export const updateShop = async (data, history, accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.put('shop', data, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};

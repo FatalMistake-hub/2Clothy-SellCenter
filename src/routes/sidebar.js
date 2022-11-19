@@ -52,11 +52,11 @@ const routes = [
         icon: 'StatIcon',
         name: 'Chỉ số',
     },
-    {
-        path: '/finance',
-        icon: 'Finance',
-        name: 'Tài chính',
-    },
+    // {
+    //     path: '/finance',
+    //     icon: 'Finance',
+    //     name: 'Tài chính',
+    // },
     // {
     //   path: "/chats",
     //   icon: "ChatIcon",
@@ -67,26 +67,26 @@ const routes = [
         icon: 'UserIcon',
         name: 'Hồ sơ shop',
     },
-    {
-        path: '/settings',
-        icon: 'OutlineCogIcon',
-        name: 'Cài đặt',
-        routes: [
-            {
-                path: '/all-products',
-                name: 'Tất cả sản phẩm',
-            },
-            {
-                path: '/add-product',
-                name: 'Thêm sản phẩm',
-            },
-        ],
-    },
     // {
-    //   path: "/logout",
-    //   icon: "OutlineLogoutIcon",
-    //   name: "Đăng xuất",
+    //     path: '/settings',
+    //     icon: 'OutlineCogIcon',
+    //     name: 'Cài đặt',
+    //     routes: [
+    //         {
+    //             path: '/all-products',
+    //             name: 'Tất cả sản phẩm',
+    //         },
+    //         {
+    //             path: '/add-product',
+    //             name: 'Thêm sản phẩm',
+    //         },
+    //     ],
     // },
+    {
+      path: "/logout",
+      icon: "OutlineLogoutIcon",
+      name: "Đăng xuất",
+    },
 ];
 
 export default routes;

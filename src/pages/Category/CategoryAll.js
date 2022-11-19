@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import { EditIcon, EyeIcon, GridViewIcon, HomeIcon, ListViewIcon, TrashIcon, AddIcon, RightArrow } from '../../icons';
 import {
     Card,
@@ -25,10 +25,10 @@ import response from '../../utils/demo/productData';
 import Icon from '../../components/Icon';
 import ProductIcon from '../../components/ProductIcon';
 import * as apiService from '../../services/apiService';
-import { addCategory } from '../../services/authService';
+import { addCategory, deleteCategory } from '../../services/authService';
 import { authRemainingSelector } from '../../redux/selector';
 import { useDispatch, useSelector } from 'react-redux';
-import { createInstance } from '../../services/createInstance'
+import { createInstance } from '../../services/createInstance';
 import AuthSlice from '../../redux/AuthSlice';
 
 const FormTitle = ({ children }) => {
@@ -59,12 +59,12 @@ const ProductsAll = () => {
     // Delete action model
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [isModalAddOpen, setIsModalAddOpen] = useState(false);
-    const [selectedDeleteProduct, setSelectedDeleteProduct] = useState(null);
+    const [selectedDeleteCategory, setSelectedDeleteCategory] = useState(null);
     const openModal = (productId, modal) => {
         if (modal == 'del') {
             let product = data.filter((product) => product.id === productId)[0];
             // console.log(product);
-            setSelectedDeleteProduct(product);
+            setSelectedDeleteCategory(product);
             setIsModalDeleteOpen(true);
         } else {
             setIsModalAddOpen(true);
@@ -106,15 +106,15 @@ const ProductsAll = () => {
 
     const fetchApi2 = async (result) => {
         const data = await apiService.categoriesById(result.id);
-        setSelected(result);
-        setCategories2(data);
+        setSelected('');
+        setCategories2(data.categories);
     };
     const [categories3, setCategories3] = useState([]);
 
     const fetchApi3 = async (result) => {
         const data = await apiService.categoriesById(result.id);
         setSelected(result);
-        setCategories3(data);
+        setCategories3(data.categories);
     };
     const [selected, setSelected] = useState();
     const [newCategory, setNewCategory] = useState();
@@ -122,24 +122,28 @@ const ProductsAll = () => {
         setNewCategory(e.target.value);
     };
 
-    const user =useSelector(authRemainingSelector)
+    const user = useSelector(authRemainingSelector);
     const currentUser = user?.login.currentUser;
-    const dispatch=useDispatch();
-    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+    const dispatch = useDispatch();
+    const history = useHistory();
 
+    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
 
     const handleAddCategory = async () => {
         let dateNew = {
             ParentId: selected.id,
-            // ShopId: 4,
             Name: newCategory,
             Description: '',
             Gender: true,
         };
-        console.log(dateNew)
-        // await addCategory(dateNew,currentUser.accessToken,axiosJWT)
+        console.log(dateNew);
+        await addCategory(dateNew, currentUser.accessToken, axiosJWT);
     };
-
+    const handleDeleteCategory = async (id) => {
+        const result = await deleteCategory(id, history, currentUser.accessToken, axiosJWT);
+        console.log(result);
+        // setResponse(result);
+    };
     return (
         <div>
             {/* Breadcum */}
@@ -251,7 +255,7 @@ const ProductsAll = () => {
                     <Icon icon={TrashIcon} className="w-6 h-6 mr-3" />
                     Xoá danh mục
                 </ModalHeader>
-                <ModalBody>Bạn có muốn xoá danh mục {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`} ?</ModalBody>
+                <ModalBody>Bạn có muốn xoá danh mục {selectedDeleteCategory && `"${selectedDeleteCategory.name}"`} ?</ModalBody>
                 <ModalFooter>
                     <div className="hidden sm:block">
                         <Button layout="outline" onClick={() => closeModal('del')}>
@@ -259,7 +263,7 @@ const ProductsAll = () => {
                         </Button>
                     </div>
                     <div className="hidden sm:block">
-                        <Button>Xoá</Button>
+                        <Button onClick={() => handleDeleteCategory(selectedDeleteCategory.id)}>Xoá</Button>
                     </div>
                 </ModalFooter>
             </Modal>

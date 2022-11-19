@@ -1,6 +1,7 @@
-import React, { useState, useEffect,useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
+
 import { EditIcon, EyeIcon, GridViewIcon, HomeIcon, ListViewIcon, TrashIcon, AddIcon } from '../../icons';
 import {
     Card,
@@ -30,7 +31,11 @@ import { genRating } from '../../utils/genarateRating';
 import ProductIcon from '../../components/ProductIcon';
 import * as apiService from '../../services/apiService';
 import { useParams } from 'react-router-dom';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../../redux/selector';
+import AuthSlice from '../../redux/AuthSlice';
+import { createInstance } from '../../services/createInstance';
+import { addProductCategoryShop } from '../../services/authService';
 const FormTitle = ({ children }) => {
     return <h2 className=" text-3xl  font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
 };
@@ -39,23 +44,26 @@ const ProductsAll = () => {
 
     const fetchApi = async (id) => {
         const dataItem = await apiService.productByCategory(id);
-        const dataAllItem = await apiService.allShopProducts(id);
-        console.log(dataItem)
+        const dataAllItem = await apiService.allShopProducts(1);
+        console.log(dataItem);
         setResponseTable(dataItem);
-        setResponse(dataAllItem[0].items)
-        // setAllItem(dataAllItem[0]);
+        setResponse(dataAllItem[0].items.filter((item) => item.categoryId != id));
+        const productArray = new Array(dataAllItem[0]?.items.length).fill(false);
+        dataAllItem[0].items.map((item, i) => {
+            productArray[i] = item.id;
+        });
+        setAllCheck(productArray);
     };
     useEffect(() => {
         fetchApi(id);
     }, [id]);
 
-
-// For modal pagination
+    // For modal pagination
     const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
     const [response, setResponse] = useState([]);
 
-    const resultsPerPage=5;
+    const resultsPerPage = 5;
     const totalResults = response?.length;
 
     function onPageChange(p) {
@@ -63,13 +71,13 @@ const ProductsAll = () => {
     }
     useEffect(() => {
         setData(response?.slice((page - 1) * resultsPerPage, page * resultsPerPage));
-    }, [page, resultsPerPage,response]);
-// For main Table pagination
+    }, [page, resultsPerPage, response]);
+    // For main Table pagination
     const [pageTable, setPageTable] = useState(1);
     const [dataTable, setDataTable] = useState([]);
     const [responseTable, setResponseTable] = useState([]);
 
-    const resultsPerPageTable=10;
+    const resultsPerPageTable = 10;
     const totalResultsTable = responseTable.items?.length;
 
     function onPageChangeTable(p) {
@@ -77,7 +85,7 @@ const ProductsAll = () => {
     }
     useEffect(() => {
         setDataTable(responseTable.items?.slice((pageTable - 1) * resultsPerPageTable, pageTable * resultsPerPageTable));
-    }, [pageTable, resultsPerPageTable,responseTable.items]);
+    }, [pageTable, resultsPerPageTable, responseTable.items]);
 
     // Delete action model
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
@@ -85,10 +93,10 @@ const ProductsAll = () => {
     const [selectedDeleteProduct, setSelectedDeleteProduct] = useState(null);
     const openModal = (productId, modal) => {
         if (modal == 'del') {
+            setSelectedDeleteProduct(productId);
             setIsModalDeleteOpen(true);
         } else {
             setIsModalAddOpen(true);
-
         }
     };
 
@@ -100,9 +108,46 @@ const ProductsAll = () => {
         }
     };
 
-    // Handle list view
-    
-    console.log(response)
+    const [allCheck, setAllCheck] = useState();
+    const [checked, setChecked] = useState([]);
+    console.log(checked);
+    const handleCheck = (id) => {
+        setChecked((prev) => {
+            const isChecked = checked.includes(id);
+
+            console.log('id', id);
+            if (id == 'all' && isChecked) {
+                return [];
+            }
+            if (isChecked) {
+                return checked.filter((item) => {
+                    if (item !== id && item != 'all') {
+                        return item;
+                    }
+                });
+            } else {
+                if (id == 'all') {
+                    return allCheck.concat('all');
+                }
+                return [...prev, id];
+            }
+        });
+    };
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const history = useHistory();
+
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
+    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+    const handleAddItemCategory = async () => {
+        let listItem = {
+            CategoryId: id,
+            Items: checked.filter((item) => item != 'all'),
+        };
+        console.log(listItem);
+        await addProductCategoryShop(listItem, history,currentUser.accessToken, axiosJWT);
+    };
     return (
         <div>
             {/* Delete category model */}
@@ -111,7 +156,7 @@ const ProductsAll = () => {
                     <Icon icon={TrashIcon} className="w-6 h-6 mr-3" />
                     Xoá danh mục
                 </ModalHeader>
-                <ModalBody>Bạn có muốn xoá danh mục {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`} ?</ModalBody>
+                <ModalBody>Bạn có muốn xoá sản phẩm {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`} khỏi danh mục ?</ModalBody>
                 <ModalFooter>
                     <div className="hidden sm:block">
                         <Button layout="outline" onClick={() => closeModal('del')}>
@@ -125,26 +170,50 @@ const ProductsAll = () => {
             </Modal>
             {/* Add category model */}
             <Modal isOpen={isModalAddOpen} onClose={() => closeModal('add')} style={{ width: '1000px' }}>
-                <ModalHeader className="flex items-center">Chọn sản phẩm</ModalHeader>
+                <ModalHeader className="flex items-center mb-4">Chọn sản phẩm</ModalHeader>
                 <ModalBody>
                     <TableContainer className="mb-8">
                         <Table>
                             <TableHeader>
                                 <tr>
+                                    <TableCell>
+                                        <input
+                                            type="checkbox"
+                                            id={`custom-checkbox-all`}
+                                            // name={name}
+                                            // value={name}
+                                            checked={checked?.includes('all')}
+                                            onChange={() => handleCheck('all')}
+                                        />
+                                    </TableCell>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Stock</TableCell>
                                     <TableCell>Size</TableCell>
                                     <TableCell>QTY</TableCell>
                                     <TableCell>Price</TableCell>
-                                   
                                 </tr>
                             </TableHeader>
                             <TableBody>
                                 {data?.map((product) => (
                                     <TableRow key={product.id}>
                                         <TableCell>
+                                            <input
+                                                type="checkbox"
+                                                id={`custom-checkbox-${product.id}`}
+                                                // name={name}
+                                                // value={name}
+
+                                                checked={checked?.includes(product.id)}
+                                                onChange={() => handleCheck(product.id)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
                                             <div className="flex items-center text-sm">
-                                                <ProductIcon className="hidden mr-4 md:block" src={product.images[0].path} alt="Product image" />
+                                                <ProductIcon
+                                                    className="hidden mr-4 md:block"
+                                                    src={product.images[0].path}
+                                                    alt="Product image"
+                                                />
                                                 <div>
                                                     <p className="font-semibold ">{product.name}</p>
                                                 </div>
@@ -159,7 +228,6 @@ const ProductsAll = () => {
                                         <TableCell className="text-sm">{product.size}</TableCell>
                                         <TableCell className="text-sm">{product.quantity}</TableCell>
                                         <TableCell className="text-sm">{product.price.toLocaleString('es-ES')} ₫</TableCell>
-                                        
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -175,13 +243,21 @@ const ProductsAll = () => {
                     </TableContainer>
                 </ModalBody>
                 <ModalFooter>
-                    <div className="hidden sm:block">
-                        <Button layout="outline" onClick={() => closeModal('add')}>
-                            Huỷ
-                        </Button>
-                    </div>
-                    <div className="hidden sm:block">
-                        <Button>Xác nhận</Button>
+                    <div className="w-full flex justify-between">
+                        <div className="leading-5 flex items-center">
+                            <span className="mr-1 font-normal text-gray-600">Số sản phẩm đã chọn :</span>
+                            <span className="ml-1 mr-1">{checked.filter((item) => item != 'all')?.length} </span>
+                        </div>
+                        <div className="flex">
+                            <div className="ml-4  ">
+                                <Button layout="outline" onClick={() => closeModal('add')}>
+                                    Huỷ
+                                </Button>
+                            </div>
+                            <div className="ml-4 hidden sm:block">
+                                <Button onClick={handleAddItemCategory}>Xác nhận</Button>
+                            </div>
+                        </div>
                     </div>
                 </ModalFooter>
             </Modal>
@@ -209,18 +285,18 @@ const ProductsAll = () => {
                 <CardBody className="flex items-center">
                     <div className="p-2">
                         <ProductIcon
-                            src="	https://cf.shopee.vn/file/sg-11134201-22110-em4g3m5y5cjv5a"
+                            src={responseTable?.imagePath}
                             alt="Product image"
                             size="w-32 h-32"
                         />
                     </div>
                     <div className="">
-                        <FormTitle>{dataTable?.name}</FormTitle>
+                        <FormTitle>{responseTable?.name}</FormTitle>
                         <div className="flex items-center mt-2">
                             <span className="font-medium mr-1 text-gray-400">Tạo bởi:</span>
                             <span className="font-medium mr-4">Người bán | Tự chọn</span>
                             <span className="font-medium mr-1 text-gray-400">Sản phẩm:</span>
-                            <span className="font-medium ">{dataTable?.items?.length}</span>
+                            <span className="font-medium ">{responseTable?.items?.length}</span>
                         </div>
                     </div>
                 </CardBody>
@@ -273,7 +349,7 @@ const ProductsAll = () => {
                                                 <Button
                                                     icon={TrashIcon}
                                                     layout="outline"
-                                                    onClick={() => openModal(product.id, 'del')}
+                                                    onClick={() => openModal(product, 'del')}
                                                     aria-label="Delete"
                                                 />
                                             </div>

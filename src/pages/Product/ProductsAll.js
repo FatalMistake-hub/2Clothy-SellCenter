@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import { EditIcon, EyeIcon, GridViewIcon, HomeIcon, ListViewIcon, TrashIcon } from '../../icons';
 import {
     Card,
@@ -25,16 +25,22 @@ import {
 } from '@windmill/react-ui';
 
 import Icon from '../../components/Icon';
-import { genRating } from '../../utils/genarateRating';
 import * as apiService from '../../services/apiService';
+import * as apiAuthService from '../../services/authService';
 import ProductIcon from '../../components/ProductIcon';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../../redux/selector';
+import { createInstance } from '../../services/createInstance';
+import AuthSlice from '../../redux/AuthSlice';
+import { addProduct, logOutUser } from '../../services/authService';
 const ProductsAll = () => {
-    const [view, setView] = useState('grid');
+    const [view, setView] = useState('list');
 
     // Table and grid data handlling
     const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
     const [response, setResponse] = useState();
+    const [resultCategory, setResultCategory] = useState();
     // pagination setup
     const [resultsPerPage, setResultsPerPage] = useState(10);
     const totalResults = response?.length;
@@ -48,9 +54,11 @@ const ProductsAll = () => {
     // here you would make another server request for new data
     useEffect(() => {
         const fetchApi = async () => {
-            const result = await apiService.getAllItem();
-            console.log(result);
-            setResponse(result);
+            const result = await apiService.allShopProducts(1);
+            const dataCategory = await apiService.categoriesShop(1);
+            setResponse(result[0].items);
+            setResultCategory(dataCategory[0].categories);
+            console.log(dataCategory)
         };
         fetchApi();
     }, []);
@@ -61,8 +69,8 @@ const ProductsAll = () => {
     // Delete action model
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedDeleteProduct, setSelectedDeleteProduct] = useState(null);
-    async function openModal(productId) {
-        let product = await data.filter((product) => product.id === productId)[0];
+    async function openModal(product) {
+        // let product = await data.filter((product) => product.id === productId)[0];
         // console.log(product);
         setSelectedDeleteProduct(product);
         setIsModalOpen(true);
@@ -82,9 +90,33 @@ const ProductsAll = () => {
         }
     };
 
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const history = useHistory();
+
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
+    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+
+    const handleDeleteProduct = async (id) => {
+        const result = await apiAuthService.deleteProduct(id, history, accessToken, axiosJWT);
+        console.log(result);
+        setResponse(result);
+    };
+
+    const [filter, setFilter] = useState();
+    useEffect(() => {
+        // If Filters Applied
+        setData(response?.filter((item) => item.categoryName == filter));
+
+        // if filters dosent applied
+        if (filter === 'Tất cả' || !filter) {
+            setData(response);
+        }
+    }, [filter]);
     return (
         <div>
-            <PageTitle>Tất cả Products</PageTitle>
+            <PageTitle>Tất cả sản phẩm</PageTitle>
 
             {/* Breadcum */}
             <div className="flex text-gray-800 dark:text-gray-300">
@@ -95,7 +127,7 @@ const ProductsAll = () => {
                     </NavLink>
                 </div>
                 {'>'}
-                <p className="mx-2 text-[#ffa400]">Tất cả Products</p>
+                <p className="mx-2 text-[#ffa400]">Tất cả sản phẩm</p>
             </div>
 
             {/* Sort */}
@@ -103,7 +135,7 @@ const ProductsAll = () => {
                 <CardBody>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center">
-                            <p className="text-sm text-gray-600 dark:text-gray-400">Tất cả Products</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">Tất cả sản phẩm</p>
 
                             <Label className="mx-3">
                                 <Select className="py-3">
@@ -114,11 +146,12 @@ const ProductsAll = () => {
                             </Label>
 
                             <Label className="mx-3">
-                                <Select className="py-3">
-                                    <option>Filter by Category</option>
-                                    <option>Electronics</option>
-                                    <option>Cloths</option>
-                                    <option>Mobile Accerssories</option>
+                                <Select className="py-3"onChange={(e) => setFilter(e.target.value)} >
+                                    <option>Tất cả</option>
+                                   
+                                    {resultCategory?.map((category) => (
+                                        <option>{category.name}</option>
+                                    ))}
                                 </Select>
                             </Label>
 
@@ -140,7 +173,7 @@ const ProductsAll = () => {
                         </div>
                         <div className="">
                             <Button
-                                icon={view === 'list' ? ListViewIcon : GridViewIcon}
+                                icon={view === 'list' ? GridViewIcon : ListViewIcon}
                                 className="p-2"
                                 aria-label="Edit"
                                 onClick={handleChangeView}
@@ -155,28 +188,20 @@ const ProductsAll = () => {
                 <ModalHeader className="flex items-center">
                     {/* <div className="flex items-center"> */}
                     <Icon icon={TrashIcon} className="w-6 h-6 mr-3" />
-                    Delete Product
+                    Xoá sản phẩm
                     {/* </div> */}
                 </ModalHeader>
-                <ModalBody>Make sure you want to delete product {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`}</ModalBody>
+                <ModalBody>
+                    Hãy chắc chắn rằng bạn muốn xóa sản phẩm {selectedDeleteProduct && `"${selectedDeleteProduct.name}" ?`}
+                </ModalBody>
                 <ModalFooter>
                     <div className="hidden sm:block">
                         <Button layout="outline" onClick={closeModal}>
-                            Cancel
+                            Huỷ
                         </Button>
                     </div>
                     <div className="hidden sm:block">
-                        <Button>Delete</Button>
-                    </div>
-                    <div className="block w-full sm:hidden">
-                        <Button block size="large" layout="outline" onClick={closeModal}>
-                            Cancel
-                        </Button>
-                    </div>
-                    <div className="block w-full sm:hidden">
-                        <Button block size="large">
-                            Delete
-                        </Button>
+                        <Button onClick={() => handleDeleteProduct(selectedDeleteProduct.id)}>Xoá</Button>
                     </div>
                 </ModalFooter>
             </Modal>
@@ -188,12 +213,12 @@ const ProductsAll = () => {
                         <Table>
                             <TableHeader>
                                 <tr>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Stock</TableCell>
+                                    <TableCell>Tên sản phẩm</TableCell>
+                                    <TableCell>Kho hàng</TableCell>
                                     <TableCell>Size</TableCell>
-                                    <TableCell>QTY</TableCell>
-                                    <TableCell>Price</TableCell>
-                                    <TableCell>Action</TableCell>
+                                    <TableCell>Số lượng</TableCell>
+                                    <TableCell>Giá</TableCell>
+                                    <TableCell>Thao tác</TableCell>
                                 </tr>
                             </TableHeader>
                             <TableBody>
@@ -201,7 +226,11 @@ const ProductsAll = () => {
                                     <TableRow key={product.id}>
                                         <TableCell>
                                             <div className="flex items-center text-sm">
-                                                <ProductIcon className="hidden mr-4 md:block" src={product.images[0].path} alt="Product image" />
+                                                <ProductIcon
+                                                    className="hidden mr-4 md:block"
+                                                    src={product.images[0].path}
+                                                    alt="Product image"
+                                                />
                                                 <div>
                                                     <p className="font-semibold ">{product.name}</p>
                                                 </div>
@@ -230,7 +259,7 @@ const ProductsAll = () => {
                                                 <Button
                                                     icon={TrashIcon}
                                                     layout="outline"
-                                                    onClick={() => openModal(product.id)}
+                                                    onClick={() => openModal(product)}
                                                     aria-label="Delete"
                                                 />
                                             </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import { HomeIcon, AddIcon, PublishIcon, TrashIcon, RightArrow, StoreIcon } from '../../icons';
 import { Card, CardBody, Label, Input, Textarea, Button, Select, Modal, ModalHeader, ModalBody, ModalFooter } from '@windmill/react-ui';
@@ -8,12 +8,20 @@ import { useState, useEffect, useRef } from 'react';
 import * as apiService from '../../services/apiService';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import UploadImage from '../../services/imageService';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../../redux/selector';
+import { createInstance } from '../../services/createInstance';
+import AuthSlice from '../../redux/AuthSlice';
+import { addProduct, logOutUser } from '../../services/authService';
 const FormTitle = ({ children }) => {
     return <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
 };
 const Profile = () => {
     const [images, setImages] = useState([]);
     const [imageURLS, setImageURLs] = useState([]);
+    const [bannerPathURLS, setBannerPathURLs] = useState([]);
+
     useEffect(() => {
         if (images.length < 1) return;
         const newImageUrls = [];
@@ -32,6 +40,8 @@ const Profile = () => {
     };
     function onImageChange(e) {
         const files = e.target.files;
+        UploadImage(files, setBannerPathURLs);
+
         let check;
         for (let i = 0; i < e.target.files.length; i++) {
             if (isValidFileUploaded(files[i])) {
@@ -57,6 +67,7 @@ const Profile = () => {
     const onDivClick = () => {
         inputFile.current.click();
     };
+
     //Logo
     const inputFileLogo = useRef(null);
     const onDivClickLogo = () => {
@@ -64,6 +75,8 @@ const Profile = () => {
     };
     const [imagesLogo, setImagesLogo] = useState('');
     const [imageURLSLogo, setImageURLsLogo] = useState('https://cf.shopee.vn/file/72443418d390c42dd6342d7a010532d1');
+    const [logoPathURLS, setLogoPathURLs] = useState([]);
+   
     useEffect(() => {
         if (typeof imagesLogo !== 'string') {
             console.log('set', imagesLogo[0]);
@@ -77,42 +90,52 @@ const Profile = () => {
     };
     function onImageLogoChange(e) {
         const files = e.target.files;
+        UploadImage(files, setLogoPathURLs);
+
         if (isValidFileUploadedLogo(files[0])) {
             setImagesLogo(files);
         } else {
             alert('File invalid');
         }
-
     }
-    
+
+
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const history = useHistory();
+
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
     const [errorResponse, setErrorResponse] = useState('');
-    const AddProductForm = useFormik({
+    const ShopForm = useFormik({
         initialValues: {
-            email: '',
-            password: '',
+            Name: '',
+            Address: '',
+            PhoneNumber: '',
+            Paths: [],
+            Pathbanner: [],
+            Description: '',
         },
-        validationSchema: Yup.object({
-            email: Yup.string()
-                .required('Bắt buộc!')
-                .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Vui lòng nhập một địa chỉ email hợp lệ!'),
-            password: Yup.string()
-                .required('Bắt buộc!')
-                .matches(
-                    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
-                    'Mật khẩu phải có 7-19 ký tự và chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!',
-                ),
-        }),
+        validationSchema: Yup.object({}),
         onSubmit: (values) => {
-            const newUser = {
-                Email: values.email,
-                Password: values.password,
+            const updateShop = {
+                Name: values.Name,
+                Address: values.Address,
+                PhoneNumber: values.PhoneNumber,
+                Paths: logoPathURLS,
+                Pathbanner: bannerPathURLS,
+                Description: values.Description,
             };
+            console.log(updateShop);
+            // const fetchApi = async () => {};
+            // fetchApi();
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
             const fetchApi = async () => {
-                // const res = await loginUser(newUser, dispatch, navigate);
-                const res = 1;
+                const res = await updateShop(updateShop, history, accessToken, axiosJWT);
                 setErrorResponse(res);
+                console.log(res)
             };
-            fetchApi();
+            // fetchApi();
         },
     });
     return (
@@ -135,21 +158,43 @@ const Profile = () => {
                         <PageTitle>Hồ Sơ Shop</PageTitle>
                         <FormTitle>Xem tình trạng Shop và cập nhật hồ sơ Shop của bạn</FormTitle>
                     </div>
-                    <form onSubmit={AddProductForm.handleSubmit}>
+                    <form onSubmit={ShopForm.handleSubmit}>
                         <CardBody className="w-4/5 mx-auto">
                             <FormTitle>Tên shop</FormTitle>
                             <Label>
-                                <Input className="mb-4" placeholder="Tên shop" />
+                                <Input
+                                    id="Name"
+                                    name="Name"
+                                    value={ShopForm.values.Name}
+                                    onChange={ShopForm.handleChange}
+                                    className="mb-4"
+                                    placeholder="Tên shop"
+                                />
                             </Label>
                             <FormTitle>Số điện thoại</FormTitle>
                             <Label>
-                                <Input className="mb-4" placeholder="Nhập số điện thoại" type="number"/>
+                                <Input
+                                    id="PhoneNumber"
+                                    name="PhoneNumber"
+                                    value={ShopForm.values.PhoneNumber}
+                                    onChange={ShopForm.handleChange}
+                                    className="mb-4"
+                                    placeholder="Nhập số điện thoại"
+                                    type="number"
+                                />
                             </Label>
                             <FormTitle>Shop logo</FormTitle>
 
                             <div className="w-32 h-32 relative  rounded mr-4 mb-4  text-center  flex" onClick={onDivClickLogo}>
                                 <div className="w-full h-full   flex items-center">
-                                    <input type="file" className="hidden" onChange={onImageLogoChange} ref={inputFileLogo} />
+                                    <input
+                                        id="Paths"
+                                        name="Paths"
+                                        type="file"
+                                        className="hidden"
+                                        onChange={onImageLogoChange}
+                                        ref={inputFileLogo}
+                                    />
                                     <img src={imageURLSLogo} alt="" className="rounded" />
                                 </div>
                                 <div className=" rounded-b absolute bottom-0 w-full h-6 text-medium leading-6 bg-gray-700 opacity-75 hover:bg-gray-500 text-white text-center cursor-pointer">
@@ -158,15 +203,23 @@ const Profile = () => {
                             </div>
                             <FormTitle>Địa chỉ</FormTitle>
                             <Label>
-                                <Textarea className="mb-4" rows="3" placeholder="Nhập thông tin địa chỉ của shop bạn vào đây" />
+                                <Textarea
+                                    id="Address"
+                                    name="Address"
+                                    value={ShopForm.values.Address}
+                                    onChange={ShopForm.handleChange}
+                                    className="mb-4"
+                                    rows="3"
+                                    placeholder="Nhập thông tin địa chỉ của shop bạn vào đây"
+                                />
                             </Label>
                             <FormTitle>Banner shop</FormTitle>
 
                             <div className="w-full flex flex-wrap">
                                 {imageURLS.map((imageSrc, i) => (
-                                    <div key={i} className="w-20 h-20 rounded mr-4 mb-4">
+                                    <div key={i} className="w-96 h-40 rounded mr-4 mb-4">
                                         <div className="w-full h-full ">
-                                            <img src={imageSrc} alt="not fount" className="w-20 h-20 rounded border " />
+                                            <img src={imageSrc} alt="not fount" className="w-full h-full rounded border " />
                                         </div>
                                     </div>
                                 ))}
@@ -176,7 +229,15 @@ const Profile = () => {
                                         onClick={onDivClick}
                                         className="w-full h-full rounded border border-dashed border-slate-600 flex items-center hover:bg-orange-100"
                                     >
-                                        <input type="file" multiple={true} className="hidden" onChange={onImageChange} ref={inputFile} />
+                                        <input
+                                            id="Pathbanner"
+                                            name="Pathbanner"
+                                            type="file"
+                                            multiple={true}
+                                            className="hidden"
+                                            onChange={onImageChange}
+                                            ref={inputFile}
+                                        />
                                         <div className="flex text-orange-600 flex-col   ">
                                             <div className="h-6">
                                                 <i className="w-6 h-6 inline-block fill-current">
@@ -193,10 +254,18 @@ const Profile = () => {
                             </div>
                             <FormTitle>Mô tả shop</FormTitle>
                             <Label>
-                                <Textarea className="mb-4" rows="6" placeholder="Nhập mô tả hoặc thông tin của shop bạn vào đây"/>
+                                <Textarea
+                                    id="Description"
+                                    name="Description"
+                                    value={ShopForm.values.Description}
+                                    onChange={ShopForm.handleChange}
+                                    className="mb-4"
+                                    rows="6"
+                                    placeholder="Nhập mô tả hoặc thông tin của shop bạn vào đây"
+                                />
                             </Label>
                             <div className="w-full">
-                                <Button size="large" iconLeft={AddIcon}>
+                                <Button type="submit" size="large" iconLeft={AddIcon}>
                                     Lưu
                                 </Button>
                             </div>

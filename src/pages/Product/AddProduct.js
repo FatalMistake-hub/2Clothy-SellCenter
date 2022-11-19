@@ -1,6 +1,6 @@
 import React from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import { HomeIcon, AddIcon, PublishIcon, TrashIcon, RightArrow, StoreIcon } from '../../icons';
 import { Card, CardBody, Label, Input, Textarea, Button, Select, Modal, ModalHeader, ModalBody, ModalFooter } from '@windmill/react-ui';
@@ -8,7 +8,12 @@ import { useState, useEffect, useRef } from 'react';
 import * as apiService from '../../services/apiService';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-
+import UploadImage from '../../services/imageService';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../../redux/selector';
+import { createInstance } from '../../services/createInstance';
+import AuthSlice from '../../redux/AuthSlice';
+import { addProduct, logOutUser } from '../../services/authService';
 const FormTitle = ({ children }) => {
     return <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
 };
@@ -25,8 +30,8 @@ const AddProduct = () => {
     function closeModal() {
         setIsModalOpen(false);
     }
-    const [categoriesResult, setCategoriesResult] = useState([]);
 
+    const [categoriesResult, setCategoriesResult] = useState([]);
     useEffect(() => {
         const fetchApi = async () => {
             const result = await apiService.allCategories();
@@ -34,28 +39,28 @@ const AddProduct = () => {
         };
         fetchApi();
     }, []);
+
+    const [selected, setSelected] = useState();
     const [categories2, setCategories2] = useState([]);
     const fetchApi2 = async (result) => {
         const data = await apiService.categoriesById(result.id);
         // setSelected(result);
         // AddProductForm.values.CategoryId = result;
-        setCategories2(data);
+        setCategories2(data.categories);
     };
     const fetchApi3 = (result) => {
         setSelected(result);
         AddProductForm.values.CategoryId = result;
     };
 
-    const [selected, setSelected] = useState();
-
     const [images, setImages] = useState([]);
     const [imageURLS, setImageURLs] = useState([]);
+    const [pathURLS, setPathURLs] = useState([]);
     useEffect(() => {
         if (images.length < 1) return;
         const newImageUrls = [];
 
-        AddProductForm.values.Paths=images
-        console.log(AddProductForm.values.Paths)
+        AddProductForm.values.Paths = images;
 
         images.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
         setImageURLs(newImageUrls);
@@ -68,6 +73,8 @@ const AddProduct = () => {
     };
     function onImageChange(e) {
         const files = e.target.files;
+        UploadImage(files, setPathURLs);
+
         let check;
         for (let i = 0; i < e.target.files.length; i++) {
             if (isValidFileUploaded(files[i])) {
@@ -93,26 +100,32 @@ const AddProduct = () => {
         inputFile.current.click();
     };
 
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const history = useHistory();
+
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
+
     const [errorResponse, setErrorResponse] = useState('');
     const AddProductForm = useFormik({
         initialValues: {
             CategoryId: null,
-            // ShopId: null,
             Name: '',
             Price: null,
             Description: '',
             Size: '',
-            // Quantity: null,
             Paths: [],
+            // Quantity: null,
         },
         validationSchema: Yup.object({
-            // CategoryId: Yup.string().required('Bắt buộc!'),
-            // Name: Yup.string().required('Bắt buộc!'),
-            // Price: Yup.string().required('Bắt buộc!'),
-            // Description: Yup.string().required('Bắt buộc!'),
-            // Size: Yup.string().required('Bắt buộc!'),
+            CategoryId: Yup.object().required('Bắt buộc!'),
+            Name: Yup.string().required('Bắt buộc!'),
+            Price: Yup.number().required('Bắt buộc!'),
+            Description: Yup.string().required('Bắt buộc!'),
+            Size: Yup.string().required('Bắt buộc!'),
+            Paths: Yup.array().required('Bắt buộc!'),
             // Quantity: Yup.string().required('Bắt buộc!'),
-            // Paths: Yup.string().required('Bắt buộc!'),
         }),
         onSubmit: (values) => {
             const newProduct = {
@@ -121,21 +134,24 @@ const AddProduct = () => {
                 Price: values.Price,
                 Description: values.Description,
                 Size: values.Size,
+                Paths: pathURLS,
                 // Quantity: null,
-                Paths: values.Paths,
             };
-            console.log("submit",newProduct);
-            // const fetchApi = async () => {
-            //     // const res = await loginUser(newUser, dispatch, navigate);
-            //     const res = 1;
-            //     setErrorResponse(res);
-            // };
-            // fetchApi();
+            console.log('submit', newProduct);
+            console.log(AddProductForm.errors);
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+            const fetchApi = async () => {
+                const res = await addProduct(newProduct, history, accessToken, axiosJWT);
+                setErrorResponse(res);
+                console.log(res);
+            };
+            fetchApi();
         },
     });
     return (
         <div>
             <PageTitle>Thêm Mới Sản Phẩm</PageTitle>
+            <PageTitle>{errorResponse}</PageTitle>
 
             {/* Breadcum */}
             <div className="flex text-gray-800 dark:text-gray-300">
@@ -158,7 +174,7 @@ const AddProduct = () => {
                         {/* </div> */}
                     </ModalHeader>
                     <ModalBody className="max-w-7xl max-h-96">
-                        {/* Make sure you want to delete product{" "}
+                        {/* Hãy chắc chắn rằng bạn muốn xóa sản phẩm{" "}
             {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`} */}
                         <div className="flex-grow min-h-8 overflow-auto text-sm px-6">
                             <div className="rounded p-4 bg-gray-100">

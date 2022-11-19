@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import PageTitle from '../../components/Typography/PageTitle';
 import { HomeIcon, AddIcon, PublishIcon, StoreIcon } from '../../icons';
@@ -24,7 +24,12 @@ import response from '../../utils/demo/productData';
 import * as apiService from '../../services/apiService';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-
+import UploadImage from '../../services/imageService';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../../redux/selector';
+import { createInstance } from '../../services/createInstance';
+import AuthSlice from '../../redux/AuthSlice';
+import { addProduct, logOutUser, updateProduct } from '../../services/authService';
 const FormTitle = ({ children }) => {
     return <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
 };
@@ -57,6 +62,7 @@ const UpdateProduct = () => {
             UpdateProductForm.values.Price = dataProduct[0].price;
             UpdateProductForm.values.Description = dataProduct[0].description;
             UpdateProductForm.values.Size = dataProduct[0].size;
+            setImageURLs(dataProduct[0].images);
             setDataProduct(dataProduct[0]);
         };
         fetchApi();
@@ -66,7 +72,7 @@ const UpdateProduct = () => {
         const data = await apiService.categoriesById(result.id);
         // setSelected(result);
         // UpdateProductForm.values.CategoryId = result;
-        setCategories2(data);
+        setCategories2(data.categories);
     };
     const fetchApi3 = (result) => {
         setSelected(result);
@@ -77,6 +83,8 @@ const UpdateProduct = () => {
 
     const [images, setImages] = useState([]);
     const [imageURLS, setImageURLs] = useState([]);
+    const [pathURLS, setPathURLs] = useState([]);
+
     useEffect(() => {
         if (images.length < 1) return;
         const newImageUrls = [];
@@ -84,7 +92,7 @@ const UpdateProduct = () => {
         UpdateProductForm.values.Paths = images;
         console.log(UpdateProductForm.values.Paths);
 
-        images.forEach((image) => newImageUrls.push(URL.createObjectURL(image)));
+        images.forEach((image) => newImageUrls.push({ path: `${URL.createObjectURL(image)}` }));
         setImageURLs(newImageUrls);
     }, [images]);
     const isValidFileUploaded = (file) => {
@@ -95,6 +103,8 @@ const UpdateProduct = () => {
     };
     function onImageChange(e) {
         const files = e.target.files;
+        UploadImage(files, setPathURLs);
+
         let check;
         for (let i = 0; i < e.target.files.length; i++) {
             if (isValidFileUploaded(files[i])) {
@@ -120,44 +130,52 @@ const UpdateProduct = () => {
         inputFile.current.click();
     };
 
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const history = useHistory();
+
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
     const [errorResponse, setErrorResponse] = useState('');
     const UpdateProductForm = useFormik({
         initialValues: {
             CategoryId: product?.CategoryId,
-            // ShopId: null,
             Name: product?.Name,
             Price: product?.Price,
             Description: product?.Description,
             Size: product?.Size,
             // Quantity: null,
-            // Paths: [],
+            Paths: [],
         },
         validationSchema: Yup.object({
-            // CategoryId: Yup.string().required('Bắt buộc!'),
+            // CategoryId: Yup.object().required('Bắt buộc!'),
             // Name: Yup.string().required('Bắt buộc!'),
-            // Price: Yup.string().required('Bắt buộc!'),
+            // Price: Yup.number().required('Bắt buộc!'),
             // Description: Yup.string().required('Bắt buộc!'),
             // Size: Yup.string().required('Bắt buộc!'),
+            // Paths: Yup.array().required('Bắt buộc!'),
             // Quantity: Yup.string().required('Bắt buộc!'),
-            // Paths: Yup.string().required('Bắt buộc!'),
         }),
         onSubmit: (values) => {
             const newProduct = {
+                Id: id,
                 CategoryId: values.CategoryId.id,
                 Name: values.Name,
                 Price: values.Price,
                 Description: values.Description,
                 Size: values.Size,
+                Paths: pathURLS,
                 // Quantity: null,
-                Paths: values.Paths,
             };
             console.log('submit', newProduct);
-            // const fetchApi = async () => {
-            //     // const res = await loginUser(newUser, dispatch, navigate);
-            //     const res = 1;
-            //     setErrorResponse(res);
-            // };
-            // fetchApi();
+            console.log(UpdateProductForm.errors);
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+            const fetchApi = async () => {
+                // const res = await updateProduct(newProduct, history, accessToken, axiosJWT);
+                // setErrorResponse(res);
+                // console.log(res);
+            };
+            fetchApi();
         },
     });
     return (
@@ -173,6 +191,11 @@ const UpdateProduct = () => {
                     </NavLink>
                 </div>
                 {'>'}
+                <div className="flex items-center text-orange-600">
+                    <NavLink exact to="/all-products" className="mx-2">
+                        Tất cả sản phẩm
+                    </NavLink>
+                </div>
                 <p className="mx-2">Thêm Mới Sản Phẩm</p>
             </div>
 
@@ -185,7 +208,7 @@ const UpdateProduct = () => {
                         {/* </div> */}
                     </ModalHeader>
                     <ModalBody className="max-w-7xl max-h-96">
-                        {/* Make sure you want to delete product{" "}
+                        {/* Hãy chắc chắn rằng bạn muốn xóa sản phẩm{" "}
             {selectedDeleteProduct && `"${selectedDeleteProduct.name}"`} */}
                         <div className="flex-grow min-h-8 overflow-auto text-sm px-6">
                             <div className="rounded p-4 bg-gray-100">
@@ -249,7 +272,7 @@ const UpdateProduct = () => {
                                 {imageURLS.map((imageSrc, i) => (
                                     <div key={i} className="w-20 h-20 rounded mr-4 mb-4">
                                         <div className="w-full h-full ">
-                                            <img src={imageSrc} alt="not fount" className="w-20 h-20 rounded border " />
+                                            <img src={imageSrc.path} alt="not fount" className="w-20 h-20 rounded border " />
                                         </div>
                                     </div>
                                 ))}
@@ -349,7 +372,7 @@ const UpdateProduct = () => {
 
                             <div className="w-full">
                                 <Button type="submit" size="large" iconLeft={AddIcon}>
-                                    Thêm sản phẩm
+                                    Cập nhật sản phẩm
                                 </Button>
                             </div>
                         </CardBody>

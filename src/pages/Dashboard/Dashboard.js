@@ -118,8 +118,8 @@ function Dashboard() {
                 </CardBody>
             </Card>
 
-            {/* <PageTitle>Đơn hàng</PageTitle> */}
-            {/* <OrdersTable resultsPerPage={10} /> */}
+            <PageTitle>Đơn hàng</PageTitle>
+            <OrdersTable resultsPerPage={10} />
         </>
     );
 }
