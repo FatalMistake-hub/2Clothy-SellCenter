@@ -29,7 +29,7 @@ export const detailProduct = async (id) => {
         const res = await httpRequest.get(`item/${id}`, {
             
         });
-        return res.data;
+        return res.data; 
     } catch (error) {
         console.log("http",error);
     }
@@ -75,7 +75,14 @@ export const allShopProducts = async (id) => {
     }
 };
 
-
+export const detailShop = async (id) => {
+    try {
+        const res = await httpRequest.get(`shop/${id}`);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 
 export const put = async (keyword,data={}) => {

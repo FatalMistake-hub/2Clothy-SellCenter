@@ -35,7 +35,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authRemainingSelector } from '../../redux/selector';
 import AuthSlice from '../../redux/AuthSlice';
 import { createInstance } from '../../services/createInstance';
-import { addProductCategoryShop } from '../../services/authService';
+import { addProductCategoryShop, deleteShopCategoryProduct } from '../../services/authService';
 const FormTitle = ({ children }) => {
     return <h2 className=" text-3xl  font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
 };
@@ -44,10 +44,23 @@ const ProductsAll = () => {
 
     const fetchApi = async (id) => {
         const dataItem = await apiService.productByCategory(id);
-        const dataAllItem = await apiService.allShopProducts(1);
-        console.log(dataItem);
+        const dataAllItem = await apiService.allShopProducts(currentUser.shopId);
+
         setResponseTable(dataItem);
-        setResponse(dataAllItem[0].items.filter((item) => item.categoryId != id));
+        let itemAdd = dataAllItem[0].items.filter((item) => item.categoryId != id);
+        console.log('before');
+        console.log(dataAllItem[0].items.filter((item) => item.categoryId != id));
+
+        for (let i = 0; i < itemAdd.length; i++) {
+            if (dataItem.items.some((item) => item.name == itemAdd[i].name)) {
+                console.log(itemAdd[i]);
+                itemAdd.splice(i, 1);
+            }
+        }
+        console.log(dataItem.items);
+        console.log('after', itemAdd);
+
+        setResponse(itemAdd);
         const productArray = new Array(dataAllItem[0]?.items.length).fill(false);
         dataAllItem[0].items.map((item, i) => {
             productArray[i] = item.id;
@@ -146,7 +159,16 @@ const ProductsAll = () => {
             Items: checked.filter((item) => item != 'all'),
         };
         console.log(listItem);
-        await addProductCategoryShop(listItem, history,currentUser.accessToken, axiosJWT);
+        const res = await addProductCategoryShop(id, listItem, history, currentUser.accessToken, axiosJWT);
+        setResponseTable(res);
+    };
+
+    const handleDeleteProduct = async (idProduct) => {
+        const result = await deleteShopCategoryProduct(idProduct, id, history, accessToken, axiosJWT);
+        console.log(result);
+        // console.log(result[0].items);
+        setResponseTable(result);
+        setIsModalDeleteOpen(false);
     };
     return (
         <div>
@@ -164,7 +186,7 @@ const ProductsAll = () => {
                         </Button>
                     </div>
                     <div className="hidden sm:block">
-                        <Button>Xoá</Button>
+                        <Button onClick={() => handleDeleteProduct(selectedDeleteProduct.id)}>Xoá</Button>
                     </div>
                 </ModalFooter>
             </Modal>
@@ -284,11 +306,7 @@ const ProductsAll = () => {
             <Card className="mt-8 mb-5 shadow-md ">
                 <CardBody className="flex items-center">
                     <div className="p-2">
-                        <ProductIcon
-                            src={responseTable?.imagePath}
-                            alt="Product image"
-                            size="w-32 h-32"
-                        />
+                        <ProductIcon src={responseTable?.imagePath} alt="Product image" size="w-32 h-32" />
                     </div>
                     <div className="">
                         <FormTitle>{responseTable?.name}</FormTitle>

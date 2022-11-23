@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import PageTitle from '../../components/Typography/PageTitle';
-import { HomeIcon, AddIcon, PublishIcon, StoreIcon } from '../../icons';
+import { HomeIcon, AddIcon, PublishIcon, StoreIcon,RightArrow } from '../../icons';
 import {
     Card,
     CardBody,
@@ -17,7 +17,7 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    RightArrow,
+
 } from '@windmill/react-ui';
 import { useParams } from 'react-router-dom';
 import response from '../../utils/demo/productData';
@@ -57,7 +57,7 @@ const UpdateProduct = () => {
             setCategoriesResult(result);
             const dataProduct = await apiService.detailProduct(id);
 
-            UpdateProductForm.values.CategoryId = dataProduct[0].categoryName;
+            UpdateProductForm.values.CategoryId = {name:dataProduct[0].categoryName, id:dataProduct[0].id};
             UpdateProductForm.values.Name = dataProduct[0].name;
             UpdateProductForm.values.Price = dataProduct[0].price;
             UpdateProductForm.values.Description = dataProduct[0].description;
@@ -171,9 +171,9 @@ const UpdateProduct = () => {
             console.log(UpdateProductForm.errors);
             let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
             const fetchApi = async () => {
-                // const res = await updateProduct(newProduct, history, accessToken, axiosJWT);
-                // setErrorResponse(res);
-                // console.log(res);
+                const res = await updateProduct(newProduct, history, accessToken, axiosJWT);
+                setErrorResponse(res);
+                console.log(res);
             };
             fetchApi();
         },
@@ -200,7 +200,7 @@ const UpdateProduct = () => {
             </div>
 
             <div className="w-full mt-8 grid gap-4 grid-col md:grid-cols-3 ">
-                <Modal isOpen={isModalOpen} onClose={closeModal} style={{ width: '1000px' }}>
+            <Modal isOpen={isModalOpen} onClose={closeModal} style={{ width: '1000px' }}>
                     <ModalHeader className="flex mb-8 text-3xl ">
                         {/* <div className="flex items-center"> */}
                         {/* <Icon icon={TrashIcon} className="w-6 h-6 mr-3" /> */}
@@ -263,6 +263,7 @@ const UpdateProduct = () => {
                         </div>
                     </ModalFooter>
                 </Modal>
+
 
                 <Card className="row-span-4 md:col-span-4 ">
                     <form onSubmit={UpdateProductForm.handleSubmit}>

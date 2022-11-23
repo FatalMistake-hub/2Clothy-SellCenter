@@ -1,5 +1,6 @@
 import AuthSlice from '../redux/AuthSlice';
 import * as httpRequest from '../utils/httpRequest';
+import { allShopProducts, categoriesShop, productByCategory } from './apiService';
 
 export const loginUser = async (user, dispatch, history) => {
     dispatch(AuthSlice.actions.loginStart());
@@ -47,24 +48,34 @@ export const logOutUser = async (dispatch, history, id = '1', accessToken, axios
         return error.response.data;
     }
 };
-export const addCategory = async (data, accessToken, axiosJWT) => {
+export const addCategory = async (data, accessToken, axiosJWT,shopId) => {
     try {
-        const res = await axiosJWT.post('category', data, {
+        let res;
+        res = await axiosJWT.post('category', data, {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
-
+        if (res.status == 200) {
+            res = await categoriesShop(shopId);
+            console.log(res);
+            return res;
+        }
         return res.data;
     } catch (error) {
         console.log(error);
         return error.response.data;
     }
 };
-export const deleteCategory = async (id, history, accessToken, axiosJWT) => {
+export const deleteCategory = async (id, history, accessToken, axiosJWT,shopId) => {
     try {
-        const res = await axiosJWT.delete(`item/${id}`, {
+        let res = '';
+        res = await axiosJWT.delete(`category/${id}`, {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
-
+        if (res.status == 200) {
+            res = await allShopProducts(shopId);
+            console.log(res);
+            return res;
+        }
         // history.push('/all-products');
 
         return res.data;
@@ -86,13 +97,18 @@ export const addProduct = async (data, history, accessToken, axiosJWT) => {
         return error.response.data;
     }
 };
-export const addProductCategoryShop = async (data, history, accessToken, axiosJWT) => {
+export const addProductCategoryShop = async (idcategory,data, history, accessToken, axiosJWT) => {
     try {
-        const res = await axiosJWT.post('item/more', data, {
+        let res=''
+        res = await axiosJWT.post('item/more', data, {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
         // history.push('/all-products');
-
+        if (res.status == 200) {
+            res = await productByCategory(idcategory);
+            console.log(res);
+            return res;
+        }
         return res.data;
     } catch (error) {
         console.log(error);
@@ -112,14 +128,38 @@ export const updateProduct = async (data, history, accessToken, axiosJWT) => {
         return error.response.data;
     }
 };
-export const deleteProduct = async (id, history, accessToken, axiosJWT) => {
+export const deleteProduct = async (id, history, accessToken, axiosJWT,shopId) => {
     try {
-        const res = await axiosJWT.delete(`item/${id}`, {
+        let res = '';
+        res = await axiosJWT.delete(`item/${id}`, {
             headers: { Authorization: `Bearer ${accessToken}` },
         });
-
+        if (res.status == 200) {
+            res = await allShopProducts(shopId);
+            console.log(res);
+            return res;
+        }
         // history.push('/all-products');
-
+        console.log(res);
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+export const deleteShopCategoryProduct = async (id,idcategory, history, accessToken, axiosJWT) => {
+    try {
+        let res = '';
+        res = await axiosJWT.delete(`item/${id}`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (res.status == 200) {
+            res = await productByCategory(idcategory);
+            console.log(res);
+            return res;
+        }
+        // history.push('/all-products');
+        console.log(res);
         return res.data;
     } catch (error) {
         console.log(error);

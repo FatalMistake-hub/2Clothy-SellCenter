@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authRemainingSelector } from '../../redux/selector';
 import { createInstance } from '../../services/createInstance';
 import AuthSlice from '../../redux/AuthSlice';
-import { addProduct, logOutUser } from '../../services/authService';
+import { addProduct, logOutUser, updateShop } from '../../services/authService';
+import ErrorBox from '../../components/ErrorBox.js';
 const FormTitle = ({ children }) => {
     return <h2 className="mb-3 text-sm font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
 };
@@ -25,10 +26,10 @@ const Profile = () => {
     useEffect(() => {
         if (images.length < 1) return;
         const newImageUrls = [];
-        console.log(images);
+        ShopForm.values.Pathbanner = images;
+
         images.forEach((image) => {
-            console.log(image);
-            newImageUrls.push(URL.createObjectURL(image));
+            newImageUrls.push({ path: `${URL.createObjectURL(image)}` });
         });
         setImageURLs(newImageUrls);
     }, [images]);
@@ -54,7 +55,6 @@ const Profile = () => {
         if (files.length < 9 && check) {
             if (images.concat([...e.target.files]).length <= 9) {
                 const data = images.concat([...e.target.files]);
-
                 setImages(data);
             } else {
                 alert('Over the allowed file amount');
@@ -76,7 +76,7 @@ const Profile = () => {
     const [imagesLogo, setImagesLogo] = useState('');
     const [imageURLSLogo, setImageURLsLogo] = useState('https://cf.shopee.vn/file/72443418d390c42dd6342d7a010532d1');
     const [logoPathURLS, setLogoPathURLs] = useState([]);
-   
+
     useEffect(() => {
         if (typeof imagesLogo !== 'string') {
             console.log('set', imagesLogo[0]);
@@ -99,7 +99,6 @@ const Profile = () => {
         }
     }
 
-
     const dispatch = useDispatch();
     const user = useSelector(authRemainingSelector);
     const history = useHistory();
@@ -107,6 +106,22 @@ const Profile = () => {
     const currentUser = user?.login.currentUser;
     const accessToken = currentUser?.accessToken;
     const [errorResponse, setErrorResponse] = useState('');
+
+    const [shop, setDataShop] = useState();
+
+    useEffect(() => {
+        const fetchApi = async () => {
+            const dataShop = await apiService.detailShop(currentUser.shopId);
+            console.log(dataShop.images);
+            ShopForm.values.Name = dataShop.name;
+            ShopForm.values.Address = dataShop.address;
+            ShopForm.values.PhoneNumber = dataShop.phoneNumber;
+            setImageURLs(dataShop.images);
+            ShopForm.values.Description = dataShop.description;
+            setDataShop(dataShop);
+        };
+        fetchApi();
+    }, []);
     const ShopForm = useFormik({
         initialValues: {
             Name: '',
@@ -118,24 +133,22 @@ const Profile = () => {
         },
         validationSchema: Yup.object({}),
         onSubmit: (values) => {
-            const updateShop = {
+            const updateData = {
                 Name: values.Name,
                 Address: values.Address,
                 PhoneNumber: values.PhoneNumber,
-                Paths: logoPathURLS,
-                Pathbanner: bannerPathURLS,
+                // Paths: logoPathURLS,
+                // Pathbanner: bannerPathURLS,
+                Paths: bannerPathURLS,
                 Description: values.Description,
             };
-            console.log(updateShop);
-            // const fetchApi = async () => {};
-            // fetchApi();
-            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
             const fetchApi = async () => {
-                const res = await updateShop(updateShop, history, accessToken, axiosJWT);
+                let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+                const res = await updateShop(updateData, history, accessToken, axiosJWT);
                 setErrorResponse(res);
-                console.log(res)
+                console.log(res);
             };
-            // fetchApi();
+            fetchApi();
         },
     });
     return (
@@ -219,7 +232,7 @@ const Profile = () => {
                                 {imageURLS.map((imageSrc, i) => (
                                     <div key={i} className="w-96 h-40 rounded mr-4 mb-4">
                                         <div className="w-full h-full ">
-                                            <img src={imageSrc} alt="not fount" className="w-full h-full rounded border " />
+                                            <img src={imageSrc.path} alt="not fount" className="w-full h-full rounded border " />
                                         </div>
                                     </div>
                                 ))}
@@ -264,11 +277,17 @@ const Profile = () => {
                                     placeholder="Nhập mô tả hoặc thông tin của shop bạn vào đây"
                                 />
                             </Label>
+                            {errorResponse ? <div className="">
+                    <div className="w-full bg-green-200 text-white rounded-md p-4 my-6">
+                        <p className="font-bold text-base leading-5 bg-transparent text-black">{errorResponse}</p>
+                    </div>
+                </div> : ''}
                             <div className="w-full">
                                 <Button type="submit" size="large" iconLeft={AddIcon}>
                                     Lưu
                                 </Button>
                             </div>
+
                         </CardBody>
                     </form>
                 </Card>

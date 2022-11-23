@@ -60,11 +60,11 @@ const ProductsAll = () => {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [isModalAddOpen, setIsModalAddOpen] = useState(false);
     const [selectedDeleteCategory, setSelectedDeleteCategory] = useState(null);
-    const openModal = (productId, modal) => {
+    const openModal = (category, modal) => {
         if (modal == 'del') {
-            let product = data.filter((product) => product.id === productId)[0];
+            // let product = data.filter((product) => product.id === productId)[0];
             // console.log(product);
-            setSelectedDeleteCategory(product);
+            setSelectedDeleteCategory(category);
             setIsModalDeleteOpen(true);
         } else {
             setIsModalAddOpen(true);
@@ -83,7 +83,7 @@ const ProductsAll = () => {
     const [categoryResult, setCategoryResult] = useState();
 
     const fetchApi = async () => {
-        const dataCategory = await apiService.categoriesShop(1);
+        const dataCategory = await apiService.categoriesShop(currentUser.shopId);
         setCategoryResult(dataCategory[0].categories);
     };
     useEffect(() => {
@@ -133,16 +133,18 @@ const ProductsAll = () => {
         let dateNew = {
             ParentId: selected.id,
             Name: newCategory,
-            Description: '',
+            Description: 'none',
             Gender: true,
+            ImagePath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwRSjVPevW-unp99H8YhqEi0FMFm5olEAX4A&usqp=CAU',
         };
         console.log(dateNew);
-        await addCategory(dateNew, currentUser.accessToken, axiosJWT);
+        const result = await addCategory(dateNew, currentUser.accessToken, axiosJWT,currentUser.shopId);
+        setCategoryResult(result);
     };
     const handleDeleteCategory = async (id) => {
-        const result = await deleteCategory(id, history, currentUser.accessToken, axiosJWT);
+        const result = await deleteCategory(id, history, currentUser.accessToken, axiosJWT,currentUser.shopId);
         console.log(result);
-        // setResponse(result);
+        setCategoryResult(result);
     };
     return (
         <div>
@@ -228,7 +230,7 @@ const ProductsAll = () => {
                                                 <Button
                                                     icon={TrashIcon}
                                                     layout="outline"
-                                                    onClick={() => openModal(category.id, 'del')}
+                                                    onClick={() => openModal(category, 'del')}
                                                     aria-label="Delete"
                                                 />
                                             </div>

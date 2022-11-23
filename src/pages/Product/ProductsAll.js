@@ -54,11 +54,11 @@ const ProductsAll = () => {
     // here you would make another server request for new data
     useEffect(() => {
         const fetchApi = async () => {
-            const result = await apiService.allShopProducts(1);
-            const dataCategory = await apiService.categoriesShop(1);
+            const result = await apiService.allShopProducts(currentUser.shopId);
+            const dataCategory = await apiService.categoriesShop(currentUser.shopId);
             setResponse(result[0].items);
             setResultCategory(dataCategory[0].categories);
-            console.log(dataCategory)
+            console.log(dataCategory);
         };
         fetchApi();
     }, []);
@@ -99,9 +99,11 @@ const ProductsAll = () => {
     let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
 
     const handleDeleteProduct = async (id) => {
-        const result = await apiAuthService.deleteProduct(id, history, accessToken, axiosJWT);
+        const result = await apiAuthService.deleteProduct(id, history, accessToken, axiosJWT,currentUser.shopId);
         console.log(result);
-        setResponse(result);
+        // console.log(result[0].items);
+        setResponse(result[0].items);
+        setIsModalOpen(false);
     };
 
     const [filter, setFilter] = useState();
@@ -146,9 +148,9 @@ const ProductsAll = () => {
                             </Label>
 
                             <Label className="mx-3">
-                                <Select className="py-3"onChange={(e) => setFilter(e.target.value)} >
+                                <Select className="py-3" onChange={(e) => setFilter(e.target.value)}>
                                     <option>Tất cả</option>
-                                   
+
                                     {resultCategory?.map((category) => (
                                         <option>{category.name}</option>
                                     ))}
