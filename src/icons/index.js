@@ -41,6 +41,7 @@ import { ReactComponent as StoreIcon } from "./store.svg";
 import { ReactComponent as CategoryIcon } from "./category.svg";
 import { ReactComponent as Finance } from "./finance.svg";
 import { ReactComponent as RightArrow } from "./right-arrow.svg";
+import { ReactComponent as Wallet } from "./wallet.svg";
 
 export {
   RightArrow,
@@ -86,4 +87,5 @@ export {
   OutlinePersonIcon,
   OutlineCogIcon,
   OutlineLogoutIcon,
+  Wallet,
 };

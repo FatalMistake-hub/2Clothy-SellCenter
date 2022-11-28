@@ -42,32 +42,11 @@ const FormTitle = ({ children }) => {
 const ProductsAll = () => {
     const { id } = useParams();
 
-    const fetchApi = async (id) => {
-        const dataItem = await apiService.productByCategory(id);
-        const dataAllItem = await apiService.allShopProducts(currentUser.shopId);
-
-        setResponseTable(dataItem);
-        let itemAdd = dataAllItem[0].items.filter((item) => item.categoryId != id);
-        console.log('before');
-        console.log(dataAllItem[0].items.filter((item) => item.categoryId != id));
-
-        for (let i = 0; i < itemAdd.length; i++) {
-            if (dataItem.items.some((item) => item.name == itemAdd[i].name)) {
-                console.log(itemAdd[i]);
-                itemAdd.splice(i, 1);
-            }
-        }
-        console.log(dataItem.items);
-        console.log('after', itemAdd);
-
-        setResponse(itemAdd);
-        const productArray = new Array(dataAllItem[0]?.items.length).fill(false);
-        dataAllItem[0].items.map((item, i) => {
-            productArray[i] = item.id;
-        });
-        setAllCheck(productArray);
-    };
     useEffect(() => {
+        const fetchApi = async (id) => {
+            const dataItem = await apiService.productByCategory(id);
+            setResponseTable(dataItem);
+        };
         fetchApi(id);
     }, [id]);
 
@@ -104,11 +83,35 @@ const ProductsAll = () => {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [isModalAddOpen, setIsModalAddOpen] = useState(false);
     const [selectedDeleteProduct, setSelectedDeleteProduct] = useState(null);
-    const openModal = (productId, modal) => {
+    const openModal = (productId, modal,categoryID) => {
         if (modal == 'del') {
             setSelectedDeleteProduct(productId);
             setIsModalDeleteOpen(true);
         } else {
+            const fetchApi = async (id) => {
+                const dataAllItem = await apiService.productByCategory(categoryID);
+
+                let itemAdd = [...dataAllItem.items];
+                console.log('before',responseTable.items);
+                console.log(dataAllItem.items);
+                let result =[]
+                for (let i = 0; i < itemAdd.length; i++) {
+                    if (responseTable.items.some((item) => item.name == itemAdd[i].name)) {
+                        console.log('phan tu trung nhau',itemAdd[i] , i);
+                    }else{
+                        result.push(itemAdd[i]);
+                    }
+                }
+                console.log('after', result);
+
+                setResponse(result);
+                const productArray = new Array(result?.length).fill(false);
+                result.map((item, i) => {
+                    productArray[i] = item.id;
+                });
+                setAllCheck(productArray);
+            };
+            fetchApi();
             setIsModalAddOpen(true);
         }
     };
@@ -152,8 +155,8 @@ const ProductsAll = () => {
 
     const currentUser = user?.login.currentUser;
     const accessToken = currentUser?.accessToken;
-    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
     const handleAddItemCategory = async () => {
+        let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
         let listItem = {
             CategoryId: id,
             Items: checked.filter((item) => item != 'all'),
@@ -161,9 +164,12 @@ const ProductsAll = () => {
         console.log(listItem);
         const res = await addProductCategoryShop(id, listItem, history, currentUser.accessToken, axiosJWT);
         setResponseTable(res);
+        setIsModalAddOpen(false);
+
     };
 
     const handleDeleteProduct = async (idProduct) => {
+        let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
         const result = await deleteShopCategoryProduct(idProduct, id, history, accessToken, axiosJWT);
         console.log(result);
         // console.log(result[0].items);
@@ -316,6 +322,10 @@ const ProductsAll = () => {
                             <span className="font-medium mr-1 text-gray-400">Sản phẩm:</span>
                             <span className="font-medium ">{responseTable?.items?.length}</span>
                         </div>
+                        <div className="flex items-center mt-2">
+                            <span className="font-medium mr-1 text-gray-400">Danh mục:</span>
+                            <span className="font-medium ">{responseTable?.nameParent}</span>
+                        </div>
                     </div>
                 </CardBody>
             </Card>
@@ -327,7 +337,7 @@ const ProductsAll = () => {
                                 <FormTitle>Danh sách sản phẩm</FormTitle>
                             </div>
                             <div className=" flex justify-end">
-                                <Button size="large" iconLeft={AddIcon} onClick={() => openModal(null, 'add')}>
+                                <Button size="large" iconLeft={AddIcon} onClick={() => openModal(null, 'add',responseTable?.parentId)}>
                                     Thêm sản phẩm
                                 </Button>
                             </div>

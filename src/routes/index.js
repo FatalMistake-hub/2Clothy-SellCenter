@@ -18,7 +18,7 @@ const Chats = lazy(() => import("../pages/Profile/Chats"));
 const Profile = lazy(() => import("../pages/Profile/Profile"));
 const Settings = lazy(() => import("../pages/Profile/Settings"));
 
-const Finance = lazy(() => import("../pages/OtherPage/Finance"));
+const Finance = lazy(() => import("../pages/Finance/Finance"));
 const Page404 = lazy(() => import("../pages/OtherPage/404"));
 const Blank = lazy(() => import("../pages/OtherPage/Blank"));
 const Static = lazy(() => import("../pages/OtherPage/Static"));

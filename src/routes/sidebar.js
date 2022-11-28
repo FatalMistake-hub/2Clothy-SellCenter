@@ -52,11 +52,12 @@ const routes = [
         icon: 'StatIcon',
         name: 'Chỉ số',
     },
-    // {
-    //     path: '/finance',
-    //     icon: 'Finance',
-    //     name: 'Tài chính',
-    // },
+    {
+        icon: 'Wallet',
+        name: 'Tài chính',
+        
+        path: '/finance',
+    },
     // {
     //   path: "/chats",
     //   icon: "ChatIcon",

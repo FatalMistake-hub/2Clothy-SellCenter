@@ -96,9 +96,9 @@ const ProductsAll = () => {
 
     const currentUser = user?.login.currentUser;
     const accessToken = currentUser?.accessToken;
-    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
-
+    
     const handleDeleteProduct = async (id) => {
+        let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
         const result = await apiAuthService.deleteProduct(id, history, accessToken, axiosJWT,currentUser.shopId);
         console.log(result);
         // console.log(result[0].items);

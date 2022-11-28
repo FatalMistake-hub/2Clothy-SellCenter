@@ -4,7 +4,8 @@ import { NavLink, Route } from "react-router-dom";
 import * as Icons from "../../icons";
 import SidebarSubmenu from "./SidebarSubmenu";
 import { Button } from "@windmill/react-ui";
-import Clothy from "../../assets/img/logo-2clothy.png";
+// import Clothy from "../../assets/img/logo-2clothy.png";
+import Clothy from "../../assets/img/logo.png";
 
 function Icon({ icon, ...props }) {
   const Icon = Icons[icon];
@@ -14,15 +15,15 @@ function Icon({ icon, ...props }) {
 function SidebarContent() {
   return (
     <div className="  text-gray-500 dark:text-gray-400">
-      <div className="flex py-2 mb-2 items-center w-full text-gray shadow-bottom">
+      <div className="flex py-2  items-center w-full text-gray ">
         <img
                 aria-hidden="true"
-                className="object-contain w-12 h-12 ml-4 dark:hidden"
+                className="object-contain w-16 h-16 ml-4 dark:hidden rounded-lg"
                 src={Clothy}
                 alt="Office"
               />
         <a
-          className="ml-2 text-2xl font-semibold text-gray-800 dark:text-gray-200"
+          className="ml-4 text-2xl font-semibold text-gray-800 dark:text-gray-200"
           href="#"
         >
           Kênh người bán

@@ -37,7 +37,7 @@ function Header() {
         logOutUser(dispatch, history, '1', accessToken, axiosJWT);
     };
     return (
-        <header className="z-40 py-4 bg-white shadow-bottom dark:bg-gray-800">
+        <header className="w-full z-40 py-5 my-2 bg-white shadow-bottom dark:bg-gray-800">
             <div className="container flex items-center justify-between h-full px-6 mx-auto text-orange-600 dark:text-orange-300">
                 {/* <!-- Mobile hamburger --> */}
                 <button

@@ -61,6 +61,7 @@ export const productByCategory = async (id) => {
 export const categoriesShop = async (id) => {
     try {
         const res = await httpRequest.get(`shop/${id}/category`);
+        console.log(res.data)
         return res.data;
     } catch (error) {
         console.log(error);

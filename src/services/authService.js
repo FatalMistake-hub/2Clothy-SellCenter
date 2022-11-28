@@ -72,7 +72,7 @@ export const deleteCategory = async (id, history, accessToken, axiosJWT,shopId) 
             headers: { Authorization: `Bearer ${accessToken}` },
         });
         if (res.status == 200) {
-            res = await allShopProducts(shopId);
+            res = await categoriesShop(shopId);
             console.log(res);
             return res;
         }

@@ -127,9 +127,9 @@ const ProductsAll = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
-
+    
     const handleAddCategory = async () => {
+        let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
         let dateNew = {
             ParentId: selected.id,
             Name: newCategory,
@@ -138,13 +138,17 @@ const ProductsAll = () => {
             ImagePath: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwRSjVPevW-unp99H8YhqEi0FMFm5olEAX4A&usqp=CAU',
         };
         console.log(dateNew);
-        const result = await addCategory(dateNew, currentUser.accessToken, axiosJWT,currentUser.shopId);
+        const result = await addCategory(dateNew, currentUser.accessToken, axiosJWT, currentUser.shopId);
         setCategoryResult(result);
+        setIsModalAddOpen(false);
+
     };
     const handleDeleteCategory = async (id) => {
-        const result = await deleteCategory(id, history, currentUser.accessToken, axiosJWT,currentUser.shopId);
+        let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+        const result = await deleteCategory(id, history, currentUser.accessToken, axiosJWT, currentUser.shopId);
         console.log(result);
         setCategoryResult(result);
+        setIsModalDeleteOpen(false);
     };
     return (
         <div>
@@ -207,7 +211,11 @@ const ProductsAll = () => {
                                             <div className="flex items-center text-sm">
                                                 <ProductIcon
                                                     className="hidden mr-4 md:block"
-                                                    src={category.items[0]?.images[0].path}
+                                                    src={
+                                                        category.items[0]==null
+                                                            ? category.imagePath
+                                                            : category.items[0]?.images[0].path
+                                                    }
                                                     alt="Product image"
                                                 />
                                                 <div>
