@@ -73,6 +73,7 @@ const AddProduct = () => {
     };
     function onImageChange(e) {
         const files = e.target.files;
+        console.log(files)
         UploadImage(files, setPathURLs);
 
         let check;

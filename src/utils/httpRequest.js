@@ -1,7 +1,7 @@
 import axios from 'axios';
 //instance
 const httpRequest = axios.create({
-    baseURL: "https://commerce-clothes.herokuapp.com/api/",
+    baseURL: "https://commerce-2clothy.azurewebsites.net/api/",
 });
 
 export const get = async (path, options = {}) => {

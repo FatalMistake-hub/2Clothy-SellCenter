@@ -5,7 +5,7 @@ import { allShopProducts, categoriesShop, productByCategory } from './apiService
 export const loginUser = async (user, dispatch, history) => {
     dispatch(AuthSlice.actions.loginStart());
     try {
-        const res = await httpRequest.post('user/login', {
+        const res = await httpRequest.post('shop/login', {
             Email: user.Email,
             Password: user.Password,
         });
