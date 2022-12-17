@@ -1,23 +1,23 @@
-export const doughnutLegends = [
+export let doughnutLegends = [
     { title: "Shirts", color: "bg-blue-500" },
     { title: "Shoes", color: "bg-teal-600" },
     { title: "Bags", color: "bg-orange-600" },
   ];
   
-  export const lineLegends = [
+  export let lineLegends = [
     { title: "Organic", color: "bg-teal-600" },
     { title: "Paid", color: "bg-orange-600" },
   ];
   
-  export const barLegends = [
+  export let barLegends = [
     { title: "Shoes", color: "bg-teal-600" },
     { title: "Bags", color: "bg-orange-600" },
   ];
-  export const realTimeUsersBarLegends = [
+  export let realTimeUsersBarLegends = [
     { title: "Active Users", color: "bg-teal-600" },
   ];
   
-  export const doughnutOptions = {
+  export let doughnutOptions = {
     data: {
       datasets: [
         {
@@ -41,7 +41,7 @@ export const doughnutLegends = [
     },
   };
   
-  export const lineOptions = {
+  export let lineOptions = {
     data: {
       labels: ["January", "February", "March", "April", "May", "June", "July"],
       datasets: [
@@ -101,7 +101,7 @@ export const doughnutLegends = [
     },
   };
   
-  export const barOptions = {
+  export let barOptions = {
     data: {
       labels: ["January", "February", "March", "April", "May", "June", "July"],
       datasets: [
@@ -129,7 +129,7 @@ export const doughnutLegends = [
     },
   };
   
-  export const realTimeUsersBarOptions = {
+  export let realTimeUsersBarOptions = {
     data: {
       labels: [
         "6.00",

@@ -12,22 +12,25 @@ function Icon({ icon, ...props }) {
 
 const Orders = () => {
     // pagination setup
-    const [resultsPerPage, setResultPerPage] = useState(10);
+    const [resultsPerPage, setResultPerPage] = useState(5);
     const [filter, setFilter] = useState('Tất cả');
 
     const handleFilter = (filter_name) => {
         // console.log(filter_name);
-        if (filter_name == 'Tất cả') {
+        if (filter_name === 'Tất cả') {
             setFilter('Tất cả');
         }
-        if (filter_name == 'Chưa thanh toán') {
-            setFilter('Chưa thanh toán');
+        if (filter_name === 'Chờ xác nhận') {
+            setFilter('Chờ xác nhận');
         }
-        if (filter_name == 'Đã thanh toán') {
-            setFilter('Đã thanh toán');
+        if (filter_name === 'Đang giao') {
+            setFilter('Đang giao');
         }
-        if (filter_name == 'Hoàn thành') {
-            setFilter('Hoàn thành');
+        if (filter_name === 'Đã giao') {
+            setFilter('Đã giao');
+        }
+        if (filter_name === 'Đã huỷ') {
+            setFilter('Đã huỷ');
         }
     };
 
@@ -51,21 +54,21 @@ const Orders = () => {
             <Card className="mt-5 mb-5 shadow-md">
                 <CardBody>
                     <div className="flex items-center ">
-
                         <Label className="mx-3 flex items-center ">
-                        <p className="text-sm w-full  text-gray-600 dark:text-gray-400">Lọc đơn hàng</p>
+                            <p className="text-sm w-full  text-gray-600 dark:text-gray-400">Lọc đơn hàng</p>
                             <Select className="py-3" onChange={(e) => handleFilter(e.target.value)}>
                                 <option>Tất cả</option>
-                                <option>Chưa thanh toán</option>
-                                <option>Đã thanh toán</option>
-                                <option>Hoàn thành</option>
+                                <option>Chờ xác nhận</option>
+                                <option>Đang giao</option>
+                                <option>Đã giao</option>
+                                <option>Đã huỷ</option>
                             </Select>
                         </Label>
 
                         <Label className="mx-3 flex items-center">
                             {/* <!-- focus-within sets the color for the icon when input is focused --> */}
-                        <p className="text-sm w-full text-gray-600 dark:text-gray-400">Ngày đặt hàng</p>
-                        <Select className="py-3" onChange={(e) => handleFilter(e.target.value)}>
+                            <p className="text-sm w-full text-gray-600 dark:text-gray-400">Ngày đặt hàng</p>
+                            <Select className="py-3" onChange={(e) => handleFilter(e.target.value)}>
                                 <option>Tất cả</option>
                                 <option>Chưa thanh toán</option>
                                 <option>Đã thanh toán</option>
@@ -78,9 +81,9 @@ const Orders = () => {
                                     onChange={(e) => setResultPerPage(e.target.value)}
                                 />
                                 <div className="absolute inset-y-0 right-0 flex items-center mr-3 pointer-events-none"> */}
-                                    {/* <SearchIcon className="w-5 h-5" aria-hidden="true" /> */}
-                                    {/* Results on Table */}
-                                {/* </div>
+                            {/* <SearchIcon className="w-5 h-5" aria-hidden="true" /> */}
+                            {/* Results on Table */}
+                            {/* </div>
                             </div> */}
                         </Label>
                     </div>

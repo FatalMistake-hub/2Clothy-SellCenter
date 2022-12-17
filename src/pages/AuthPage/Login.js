@@ -20,18 +20,18 @@ function Login() {
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .required("Bắt buộc!")
-        .matches(
-          /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-          "Vui lòng nhập một địa chỉ email hợp lệ!"
-        ),
-      password: Yup.string()
-        .required("Bắt buộc!")
-        .matches(
-          /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
-          "Mật khẩu phải có 7-19 ký tự và chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!"
-        ),
+      // email: Yup.string()
+      //   .required("Bắt buộc!")
+      //   .matches(
+      //     /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      //     "Vui lòng nhập một địa chỉ email hợp lệ!"
+      //   ),
+      // password: Yup.string()
+      //   .required("Bắt buộc!")
+      //   .matches(
+      //     /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d][A-Za-z\d!@#$%^&*()_+]{7,19}$/,
+      //     "Mật khẩu phải có 7-19 ký tự và chứa ít nhất một chữ cái, một số và một ký tự đặc biệt!"
+      //   ),
     }),
     onSubmit: (values) => {
       const newUser = {
@@ -77,7 +77,7 @@ function Login() {
                     value={Login.values.email}
                     onChange={Login.handleChange}
                     className="mt-1"
-                    type="email"
+                    type="text"
                     placeholder="Enter your email"
                   />
                   {Login.errors.email && (

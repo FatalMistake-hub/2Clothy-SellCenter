@@ -12,17 +12,35 @@ import {
     Badge,
     Pagination,
 } from '@windmill/react-ui';
-import response from '../utils/demo/ordersData';
 import { EyeIcon } from '../icons';
 import ordersData from '../utils/demo/ordersData';
 import { Link, NavLink } from 'react-router-dom';
 import ProductIcon from './ProductIcon';
-
+import * as apiAuthService from '../services/authService';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../redux/selector';
+import { createInstance } from '../services/createInstance';
+import moment from 'moment/moment';
+import AuthSlice from '../redux/AuthSlice';
 const OrdersTable = ({ resultsPerPage, filter, path }) => {
     const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
+    const [response, setResponse] = useState([]);
     // pagination setup
-    const totalResults = response.length;
+
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
+    useEffect(() => {
+        const fetchApi = async () => {
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+            const result = await apiAuthService.getShopOrder(accessToken, axiosJWT);
+            setResponse(result);
+            
+        };
+        fetchApi();
+    }, []);
 
     // pagination change control
     function onPageChange(p) {
@@ -32,23 +50,85 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
     // on page change, load new sliced data
     // here you would make another server request for new data
     useEffect(() => {
-        // If Filters Applied
-        if (filter === 'Đã thanh toán') {
-            setData(response.filter((order) => order.status === 'Paid').slice((page - 1) * resultsPerPage, page * resultsPerPage));
-        }
-        if (filter === 'Chưa thanh toán') {
-            setData(response.filter((order) => order.status === 'Un-paid').slice((page - 1) * resultsPerPage, page * resultsPerPage));
-        }
-        if (filter === 'Hoàn thành') {
-            setData(response.filter((order) => order.status === 'Completed').slice((page - 1) * resultsPerPage, page * resultsPerPage));
-        }
-
-        // if filters dosent applied
         if (filter === 'Tất cả' || !filter) {
-            setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
+            setData(response?.slice((page - 1) * resultsPerPage, page * resultsPerPage));
         }
-    }, [page, resultsPerPage, filter]);
+        if (filter === 'Chờ xác nhận') {
+            setData(response?.filter((order) => order.statusId === 1).slice((page - 1) * resultsPerPage, page * resultsPerPage));
+        }
+        if (filter === 'Đang giao') {
+            setData(response?.filter((order) => order.statusId === 2).slice((page - 1) * resultsPerPage, page * resultsPerPage));
+        }
+        if (filter === 'Đã giao') {
+            setData(response?.filter((order) => order.statusId === 3).slice((page - 1) * resultsPerPage, page * resultsPerPage));
+        }
+        if (filter === 'Đã huỷ') {
+            setData(response?.filter((order) => order.statusId === 4).slice((page - 1) * resultsPerPage, page * resultsPerPage));
+        }
+    }, [page, resultsPerPage, filter,response]);
 
+    const handleStatus = (status, id) => {
+        switch (status) {
+            case 1:
+                return (
+                    <>
+                        <span
+                            onClick={() => handleOrder(id, 2)}
+                            className="my-2 font-medium cursor-pointer leading-3 text-blue-500 hover:text-blue-700"
+                            aria-label="Preview"
+                        >
+                            Xác nhận
+                        </span>
+                        <span
+                            onClick={() => handleOrder(id, 4)}
+                            className="my-2 font-medium cursor-pointer leading-3 text-blue-500 hover:text-blue-700"
+                            aria-label="Preview"
+                        >
+                            Huỷ
+                        </span>
+                    </>
+                );
+            // case 2:
+            //     return (
+            //         <span
+            //             onClick={() => handleOrder(id, 4)}
+            //             className="my-2 font-medium cursor-pointer leading-3 text-blue-500 hover:text-blue-700"
+            //             aria-label="Preview"
+            //         >
+            //             Huỷ
+            //         </span>
+            //     );
+            default:
+                return '';
+        }
+    };
+    const handleOrder = (purchaseId, status) => {
+        const fetchApi = async () => {
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+            let result;
+            if (status == 2) {
+                result = await apiAuthService.updateOrder(
+                    purchaseId,
+                    {
+                        StatusId: status,
+                    },
+                    accessToken,
+                    axiosJWT,
+                );
+                setResponse(result);
+                
+
+                // setFilterPurchases(result);
+            } else {
+                result = await apiAuthService.cancelOrder(purchaseId, accessToken, axiosJWT);
+                setResponse(result);
+                
+
+                // setFilterPurchases(result);
+            }
+        };
+        fetchApi();
+    };
     return (
         <div>
             {/* Table */}
@@ -57,70 +137,138 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                     <TableHeader>
                         <tr>
                             <TableCell>Sản phẩm</TableCell>
-                            <TableCell>Mã đơn hàng</TableCell>
+                            <TableCell>Số lượng</TableCell>
                             <TableCell>Tổng Đơn hàng</TableCell>
                             <TableCell>Trạng thái </TableCell>
-                            <TableCell>Hạn xác nhận</TableCell>
+                            <TableCell>Ngày đặt đơn</TableCell>
                             <TableCell>Thao tác</TableCell>
                         </tr>
                     </TableHeader>
                     <TableBody>
                         {data.map((order, i) => (
-                            <TableRow key={i}>
-                                <TableCell>
-                                    <div className="flex items-center text-sm">
-                                        <ProductIcon className="hidden mr-3 md:block" src={order.avatar} alt="User image" />
-                                        <div>
-                                            <p className="font-semibold">{order.name}</p>
+                            <>
+                                <TableRow key={i} className="mb-4">
+                                    <TableCell>
+                                        {/* <TableHeader> */}
+                                        <div className="flex flex-end p-4"> Mã đơn hàng: {order.id} </div>
+                                        {/* </TableHeader> */}
+                                        <div className="flex items-center text-sm">
+                                            <ProductIcon
+                                                className="hidden mr-3 md:block"
+                                                src={order.orderDetails[0].itemImg}
+                                                alt="User image"
+                                            />
+                                            <div>
+                                                <p className="font-semibold">{order.orderDetails[0].itemName}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm">#000{i}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm">{order.amount} ₫</span>
-                                </TableCell>
-                                <TableCell>
-                                    <Badge
-                                        type={
-                                            order.status === 'Un-paid'
-                                                ? 'danger'
-                                                : order.status === 'Paid'
-                                                ? 'success'
-                                                : order.status === 'Completed'
-                                                ? 'warning'
-                                                : 'neutral'
-                                        }
-                                    >
-                                        {order.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm">{new Date(order.date).toLocaleDateString()}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col  justify-between">
-                                        <Link to={`/ordersDetail`} ><span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xem chi tiết</span></Link>
-                                        <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Xác nhận</span>
+                                    </TableCell>
 
-                                        <span  className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700" aria-label="Preview">Huỷ</span>
-
-                                        {/* <span icon={EyeIcon} className="my-2" aria-label="Preview">Đang giao</span> */}
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                                    <TableCell>
+                                        <span className="text-sm">X {order.orderDetails[0].quantity}</span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <span className="text-sm">
+                                            {order.orderDetails
+                                                .reduce(function (total, order) {
+                                                    return total + order.price;
+                                                }, 0)
+                                                .toLocaleString('es-ES')}{' '}
+                                            ₫
+                                        </span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            type={
+                                                order.statusId === 4
+                                                    ? 'danger'
+                                                    : order.statusId === 3
+                                                    ? 'success'
+                                                    : order.statusId === 1
+                                                    ? 'warning'
+                                                :"primary"
+                                            }
+                                        >
+                                            {order.statusName}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell>
+                                        <span className="text-sm">{moment(data.dateCreated).format('L')}</span>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col  justify-between">
+                                            <Link to={`/orders/${order.id}`}>
+                                                <span
+                                                    className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700"
+                                                    aria-label="Preview"
+                                                >
+                                                    Xem chi tiết
+                                                </span>
+                                            </Link>
+                                            {handleStatus(order.statusId, order.id)}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                                {order.orderDetails.splice(1,order.orderDetails.length).map((orderDetails, i) => (
+                                    <TableRow key={i}>
+                                        <TableCell>
+                                            <div className="flex items-center text-sm">
+                                                <ProductIcon className="hidden mr-3 md:block" src={orderDetails.itemImg} alt="User image" />
+                                                <div>
+                                                    <p className="font-semibold">{orderDetails.itemName}</p>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>X {orderDetails.quantity}</TableCell>
+                                        <TableCell>
+                                            {/* <span className="text-sm">{orderDetails.price.toLocaleString('es-ES')} ₫</span> */}
+                                        </TableCell>
+                                        <TableCell>
+                                            {/* <Badge
+                                                type={
+                                                    orderDetails.status === 'Un-paid'
+                                                        ? 'danger'
+                                                        : orderDetails.status === 'Paid'
+                                                        ? 'success'
+                                                        : orderDetails.status === 'Completed'
+                                                        ? 'warning'
+                                                        : 'neutral'
+                                                }
+                                            >
+                                                {orderDetails.status}
+                                            </Badge> */}
+                                        </TableCell>
+                                        <TableCell>
+                                            {/* <span className="text-sm">{moment(data.dateCreated).format('MMMM Do YYYY')}</span> */}
+                                        </TableCell>
+                                        <TableCell>
+                                            {/* <div className="flex flex-col  justify-between">
+                                                <Link to={`/ordersDetail`}>
+                                                    <span
+                                                        className="my-2 font-medium leading-3 text-blue-500 hover:text-blue-700"
+                                                        aria-label="Preview"
+                                                    >
+                                                        Xem chi tiết
+                                                    </span>
+                                                </Link>
+                                                {handleStatus(data.statusId)}
+                                                <span icon={EyeIcon} className="my-2" aria-label="Preview">Đang giao</span>
+                                            </div> */}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </>
                         ))}
                     </TableBody>
+                    <TableFooter>
+                        <Pagination
+                            totalResults={response?.length}
+                            resultsPerPage={resultsPerPage}
+                            label="Table navigation"
+                            onChange={onPageChange}
+                        />
+                    </TableFooter>
                 </Table>
-                <TableFooter>
-                    <Pagination
-                        totalResults={totalResults}
-                        resultsPerPage={resultsPerPage}
-                        label="Table navigation"
-                        onChange={onPageChange}
-                    />
-                </TableFooter>
             </TableContainer>
         </div>
     );

@@ -4,7 +4,7 @@ import { lazy } from "react";
 const Dashboard = lazy(() => import("../pages/Dashboard/Dashboard"));
 
 const Orders = lazy(() => import("../pages/Order/Orders"));
-const DetailOrders = lazy(() => import("../pages/Order/DetailOrder"));
+const OrderDetail= lazy(() => import("../pages/Order/DetailOrder.js"))
 
 const CategoryAll = lazy(() => import("../pages/Category/CategoryAll"));
 const DetailCategory = lazy(() => import("../pages/Category/DetailCategory"));
@@ -34,8 +34,8 @@ const routes = [
     component: Orders,
   },
   {
-    path: "/ordersDetail",
-    component: DetailOrders,
+    path: "/orders/:id",
+    component: OrderDetail,
   },
   {
     path: "/all-categories",

@@ -8,7 +8,6 @@ const refreshToken = async (token) => {
             // withCredentials: true,
             Token: token,
         });
-        console.log('Refresh');
         return res.data;
     } catch (err) {
         console.log(err);
@@ -21,9 +20,8 @@ export const createInstance = (user, dispatch, stateSuccess) => {
         async (config) => {
             let date = new Date();
             const decodedToken = jwt_decode(user?.accessToken);
-            if (decodedToken.exp < date.getTime() / 1000) {
+            if (decodedToken.exp < (date.getTime() + 10 * 1000) / 1000) {
                 const data = await refreshToken(user?.refreshToken);
-                console.log('data', data);
 
                 const refreshUser = {
                     ...user,

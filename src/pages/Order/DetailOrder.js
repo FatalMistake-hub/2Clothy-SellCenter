@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
-import { NavLink } from 'react-router-dom';
-import { HomeIcon, PeopleIcon } from '../../icons';
+import { NavLink, useParams } from 'react-router-dom';
+import { HomeIcon, MoneyIcon, PeopleIcon } from '../../icons';
 import {
     Card,
     CardBody,
@@ -13,22 +13,45 @@ import {
     TableHeader,
     TableCell,
     TableRow,
-    TableFooter,Badge
+    TableFooter,
+    Badge,
 } from '@windmill/react-ui';
 import OrdersTable from '../../components/OrdersTable';
 import RoundIcon from '../../components/RoundIcon';
 import InfoCard from '../../components/Cards/InfoCard';
-
+import * as apiAuthService from '../../services/authService';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRemainingSelector } from '../../redux/selector';
+import { createInstance } from '../../services/createInstance';
+import moment from 'moment/moment';
+import AuthSlice from '../../redux/AuthSlice';
+import ProductIcon from '../../components/ProductIcon';
 function Icon({ icon, ...props }) {
     const Icon = icon;
     return <Icon {...props} />;
 }
 
 const Orders = () => {
+    const { id } = useParams();
     // pagination setup
     const [resultsPerPage, setResultPerPage] = useState(10);
     const [filter, setFilter] = useState('all');
+    const [response, setResponse] = useState([]);
+    // pagination setup
 
+    const dispatch = useDispatch();
+    const user = useSelector(authRemainingSelector);
+    const currentUser = user?.login.currentUser;
+    const accessToken = currentUser?.accessToken;
+    useEffect(() => {
+        const fetchApi = async () => {
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+            const result = await apiAuthService.getShopOrderDetail(id, accessToken, axiosJWT);
+            setResponse(result.orders[0]);
+            console.log(result.orders);
+        };
+        fetchApi();
+    }, []);
     const handleFilter = (filter_name) => {
         // console.log(filter_name);
         if (filter_name == 'Tất cả') {
@@ -72,9 +95,9 @@ const Orders = () => {
                     <div className="px-3 flex flex-col">
                         <span className="text-base font-bold leading-7 flex items-center ">
                             <img className="w-6 h-6 mr-1" src="https://img.icons8.com/windows/32/1A1A1A/calendar-week.png" />
-                            Dec 12 2021
+                            {moment(response.dateCreated).format('LLL')}
                         </span>
-                        <span className="text-sm font-normal leading-6 mx-4">Order ID: 1245780075gh54</span>
+                        <span className="text-sm font-normal leading-6 mx-4">Order ID: {response.id}</span>
                     </div>
                 </div>
                 <CardBody>
@@ -104,24 +127,24 @@ const Orders = () => {
                                 className="mr-4 w-12 h-12 flex justify-center"
                             />
                             <div className=" flex flex-col">
-                                <h6 className="text-base font-medium leading-5">Người mua</h6>
+                                <h6 className="text-base font-medium leading-5">Địa chỉ nhận hàng</h6>
                                 <p className="flex flex-col">
-                                    <span className="text-base font-normal leading-6">datko24</span>
-                                    <span className="text-base font-normal leading-6">datko24@example.com</span>
+                                    <span className="text-base font-normal leading-6">,{response.phoneNumber}</span>
+                                    <span className="text-base font-normal leading-6">{response.address}</span>
                                 </p>
                             </div>
                         </div>
                         <div className="w-2/6 flex">
                             <RoundIcon
-                                icon={PeopleIcon}
+                                icon={MoneyIcon}
                                 iconColorClass="text-teal-500 dark:text-teal-100"
                                 bgColorClass="bg-teal-100 dark:bg-teal-500"
                                 className="mr-4 w-12 h-12 flex justify-center"
                             />
                             <div className=" flex flex-col">
-                                <h6 className="text-base font-medium leading-5">Người mua</h6>
+                                <h6 className="text-base font-medium leading-5">Hình thức thanh toán</h6>
                                 <p className="flex flex-col">
-                                    <span className="text-base font-normal leading-6">datko24</span>
+                                    <span className="text-base font-normal leading-6">{response.paymentName}</span>
                                     <span className="text-base font-normal leading-6">datko24@example.com</span>
                                 </p>
                             </div>
@@ -135,16 +158,41 @@ const Orders = () => {
                             <TableHeader>
                                 <tr>
                                     <TableCell>Sản phẩm</TableCell>
-                                    <TableCell>Đơn giá</TableCell>
+                                    <TableCell>Size</TableCell>
                                     <TableCell>Số lượng</TableCell>
+                                    <TableCell>Đơn giá</TableCell>
                                     <TableCell>Thành tiền</TableCell>
                                 </tr>
                             </TableHeader>
                             <TableBody>
+                                {response?.orderDetails?.map((order, i) => (
+                                    <TableRow key={i} className="mb-4">
+                                        <TableCell>
+                                            <div className="flex items-center text-sm">
+                                                <ProductIcon className="hidden mr-3 md:block" src={order.itemImg} alt="User image" />
+                                                <div>
+                                                    <p className="font-semibold">{order.itemName}</p>
+                                                </div>
+                                            </div>
+                                        </TableCell>
+
+                                        <TableCell>
+                                            <span className="text-sm">{order.size}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-sm">X {order.quantity}</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-sm">{order.price.toLocaleString('es-ES')} ₫</span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span className="text-sm">{(order.price * order.quantity).toLocaleString('es-ES')} ₫ </span>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+
                                 <TableRow>
                                     <TableCell></TableCell>
-                                </TableRow>
-                                <TableRow>
                                     <TableCell></TableCell>
                                     <TableCell></TableCell>
                                     <TableCell>
@@ -157,22 +205,36 @@ const Orders = () => {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col w-48 items-end">
-                                            <span className="text-base font-normal leading-6">₫112.000</span>
-                                            <span className="text-base font-normal leading-6">₫112.000</span>
-                                            <span className="text-base font-normal leading-6">₫112.000</span>
+                                            <span className="text-base font-normal leading-6">
+                                                ₫
+                                                {response?.orderDetails
+                                                    ?.reduce(function (total, order) {
+                                                        return total + order.price;
+                                                    }, 0)
+                                                    .toLocaleString('es-ES')}{' '}
+                                            </span>
+                                            <span className="text-base font-normal leading-6">₫0</span>
+                                            <span className="text-base font-normal leading-6">
+                                                ₫
+                                                {response?.orderDetails
+                                                    ?.reduce(function (total, order) {
+                                                        return total + order.price;
+                                                    }, 0)
+                                                    .toLocaleString('es-ES')}{' '}
+                                            </span>
                                             <Badge
-                                            className="mt-4 w-24 h-14 flex items-center justify-center p-2"
-                                            // type={
-                                            //     order.status === 'Un-paid'
-                                            //         ? 'danger'
-                                            //         : order.status === 'Paid'
-                                            //         ? 'success'
-                                            //         : order.status === 'Completed'
-                                            //         ? 'warning'
-                                            //         : 'neutral'
-                                            // }
+                                                className="mt-4 w-24 h-14 flex items-center justify-center p-2"
+                                                type={
+                                                    response.statusId === 4
+                                                        ? 'danger'
+                                                        : response.statusId === 3
+                                                        ? 'success'
+                                                        : response.statusId === 1
+                                                        ? 'warning'
+                                                        : 'primary'
+                                                }
                                             >
-                                                Thành công
+                                                {response.statusName}
                                             </Badge>
                                         </div>
                                     </TableCell>
