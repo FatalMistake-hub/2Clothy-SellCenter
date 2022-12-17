@@ -15,7 +15,7 @@ const refreshToken = async (token) => {
 };
 
 export const createInstance = (user, dispatch, stateSuccess) => {
-    const newInstance = axios.create({ baseURL: process.env.REACT_APP_BASE_URL });
+    const newInstance = axios.create({ baseURL: 'https://commerce-2clothy.azurewebsites.net/api/' });
     newInstance.interceptors.request.use(
         async (config) => {
             let date = new Date();
