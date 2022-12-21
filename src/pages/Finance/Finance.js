@@ -25,14 +25,7 @@ const Finance = () => {
     const user = useSelector(authRemainingSelector);
     const currentUser = user?.login.currentUser;
     const accessToken = currentUser?.accessToken;
-    useEffect(() => {
-        const fetchApi = async () => {
-            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
-            const result = await apiAuthService.getBank(accessToken, axiosJWT);
-            setResponse(result[0]);
-        };
-        fetchApi();
-    }, []);
+     
     //  action mobank
     const [isModalBankOpen, setIsModalBankOpen] = useState(false);
     const [isModalCheckOutOpen, setIsModalCheckOutOpen] = useState(false);
