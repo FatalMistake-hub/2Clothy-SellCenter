@@ -2,7 +2,26 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import PageTitle from '../../components/Typography/PageTitle';
 import { Link, NavLink, useHistory } from 'react-router-dom';
 import { EditIcon, EyeIcon, GridViewIcon, HomeIcon, ListViewIcon, TrashIcon, AddIcon, RightArrow } from '../../icons';
-import { Card, CardBody, Label, Button, Modal, ModalHeader, ModalBody, ModalFooter, Input } from '@windmill/react-ui';
+import {
+    Card,
+    CardBody,
+    Label,
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Input,
+    Badge,
+    TableBody,
+    TableContainer,
+    Table,
+    TableHeader,
+    Pagination,
+    TableCell,
+    TableRow,
+    TableFooter,
+} from '@windmill/react-ui';
 import * as apiAuthService from '../../services/authService';
 import { useDispatch, useSelector } from 'react-redux';
 import { authRemainingSelector } from '../../redux/selector';
@@ -10,6 +29,7 @@ import { createInstance } from '../../services/createInstance';
 import moment from 'moment/moment';
 import AuthSlice from '../../redux/AuthSlice';
 import Icon from '../../components/Icon';
+import ProductIcon from '../../components/ProductIcon';
 
 const FormTitle = ({ children }) => {
     return <h2 className=" text-4xl  font-semibold text-gray-600 dark:text-gray-300">{children}</h2>;
@@ -19,17 +39,31 @@ const Finance = () => {
     // Table and grid data handlling
 
     const [response, setResponse] = useState([]);
+    const [dataTransactional, setDataTransactional] = useState([]);
+    const [dataWallet, setDataWallet] = useState([]);
     // pagination setup
 
     const dispatch = useDispatch();
     const user = useSelector(authRemainingSelector);
     const currentUser = user?.login.currentUser;
     const accessToken = currentUser?.accessToken;
-     
+
     //  action mobank
     const [isModalBankOpen, setIsModalBankOpen] = useState(false);
     const [isModalCheckOutOpen, setIsModalCheckOutOpen] = useState(false);
     const [selectedBankCategory, setSelectedBankCategory] = useState(null);
+    useEffect(() => {
+        const fetchApi = async () => {
+            let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
+            const result = await apiAuthService.getBank(accessToken, axiosJWT);
+            const resultTransaction = await apiAuthService.getTransaction(accessToken, axiosJWT);
+            const resultWallet = await apiAuthService.getWallet(accessToken, axiosJWT);
+            setResponse(result[0]);
+            setDataTransactional(resultTransaction);
+            setDataWallet(resultWallet);
+        };
+        fetchApi();
+    }, []);
     const openModal = (modal) => {
         if (modal == 'bank') {
             setSelectedBankCategory();
@@ -74,7 +108,7 @@ const Finance = () => {
                             <div className="p-8 flex flex-col justify-between w-full h-full ">
                                 <div>
                                     <h6 className="font-semibold text-xl leading-relaxed">Số dư tài khoản</h6>
-                                    <h3 className="font-bold leading-normal text-4xl mt-2">₫0</h3>
+                                    <h3 className="font-bold leading-normal text-4xl mt-2">₫{resultWallet.toLocaleString('es-ES')}</h3>
                                 </div>
                                 <div className="flex flex-end flex-row-reverse mt-4">
                                     <Button size="large" className="p-4" onClick={() => openModal('checkout')}>
@@ -93,7 +127,6 @@ const Finance = () => {
                                             // xmlns:xlink="http://www.w3.org/1999/xlink"
                                             aria-hidden="true"
                                             role="img"
-                                            class="MuiBox-root css-1t9pz9x iconify iconify--eva"
                                             width="1em"
                                             height="1em"
                                             viewBox="0 0 24 24"
@@ -106,8 +139,8 @@ const Finance = () => {
                                 </h3>
                                 <h3 className="font-bold leading-normal text-4xl mt-2">{response?.accountName}</h3>
                                 <h6 className="flex flex-end flex-row-reverse items-center my-4">
-                                    {/* **** **** **** {response?.bankNumber?.splice(-4, response?.bankNumber.length)} */}
-                                    **** **** **** {response?.bankNumber}
+                                    **** **** **** {response?.bankNumber?.slice(-4, response?.bankNumber.length)}
+                                    {/* **** **** **** {response?.bankNumber} */}
                                     <img
                                         src="https://frontend.tikicdn.com/_desktop-next/static/img/icons/checkout/icon-payment-method-vnpay.png"
                                         alt=""
@@ -119,6 +152,58 @@ const Finance = () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div className="w-full flex  justify-around p-6">
+                        <TableContainer className="mb-8">
+                            <Table>
+                                <TableHeader>
+                                    <tr>
+                                        <TableCell>Ngày</TableCell>
+                                        <TableCell>Loại giao dịch | Mô tả</TableCell>
+                                        <TableCell>Số tiền</TableCell>
+                                        <TableCell>Trạng thái</TableCell>
+                                    </tr>
+                                </TableHeader>
+                                <TableBody>
+                                    {dataTransactional.map((history, i) => (
+                                        <>
+                                            <TableRow key={i} className="mb-4">
+                                                <TableCell>
+                                                    <span className="text-sm">{moment(history.transactionDate).format('L')}</span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center text-sm">
+                                                        <div>
+                                                            <p className="font-semibold">{history.shopName}</p>
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+
+                                                <TableCell>
+                                                    <span className="text-sm">{history.money.toLocaleString('es-ES')} ₫</span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Badge
+                                                        type={
+                                                            history.status === 'Đã Hủy'
+                                                                ? 'danger'
+                                                                : history.status === 'Đã Giao'
+                                                                ? 'success'
+                                                                : history.status === 'Chờ xác nhận'
+                                                                ? 'warning'
+                                                                : 'primary'
+                                                        }
+                                                    >
+                                                        {history.status}
+                                                    </Badge>
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            <TableFooter></TableFooter>
+                        </TableContainer>
                     </div>
                 </CardBody>
             </Card>

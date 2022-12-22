@@ -347,3 +347,27 @@ export const updateBank = async ( data, accessToken, axiosJWT) => {
         return error.response.data;
     }
 };
+export const getTransaction = async ( accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.get('shop/transaction',{
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
+export const getWallet = async ( accessToken, axiosJWT) => {
+    try {
+        const res = await axiosJWT.get('shop/wallet',{
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        return error.response.data;
+    }
+};
