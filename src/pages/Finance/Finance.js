@@ -108,7 +108,7 @@ const Finance = () => {
                             <div className="p-8 flex flex-col justify-between w-full h-full ">
                                 <div>
                                     <h6 className="font-semibold text-xl leading-relaxed">Số dư tài khoản</h6>
-                                    <h3 className="font-bold leading-normal text-4xl mt-2">₫{resultWallet.toLocaleString('es-ES')}</h3>
+                                    <h3 className="font-bold leading-normal text-4xl mt-2">₫{dataWallet.toLocaleString('es-ES')}</h3>
                                 </div>
                                 <div className="flex flex-end flex-row-reverse mt-4">
                                     <Button size="large" className="p-4" onClick={() => openModal('checkout')}>

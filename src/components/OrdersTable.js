@@ -145,27 +145,27 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {data.map((order, i) => (
+                        {data?.map((order, i) => (
                             <>
                                 <TableRow key={i} className="mb-4">
                                     <TableCell>
                                         {/* <TableHeader> */}
-                                        <div className="flex flex-end p-4"> Mã đơn hàng: {order.id} </div>
+                                        <div className="flex flex-end p-4"> Mã đơn hàng: {order.billId} </div>
                                         {/* </TableHeader> */}
                                         <div className="flex items-center text-sm">
                                             <ProductIcon
                                                 className="hidden mr-3 md:block"
-                                                src={order.orderDetails[0].itemImg}
+                                                src={order.orderDetails[0]?.itemImg}
                                                 alt="User image"
                                             />
                                             <div>
-                                                <p className="font-semibold">{order.orderDetails[0].itemName}</p>
+                                                <p className="font-semibold">{order.orderDetails[0]?.itemName}</p>
                                             </div>
                                         </div>
                                     </TableCell>
 
                                     <TableCell>
-                                        <span className="text-sm">X {order.orderDetails[0].quantity}</span>
+                                        <span className="text-sm">X {order.orderDetails[0]?.quantity}</span>
                                     </TableCell>
                                     <TableCell>
                                         <span className="text-sm">
