@@ -33,7 +33,7 @@ const Customers = () => {
         var min = Math.min(...array),
             max = Math.max(...array);
 
-        return array.map((v) => (v - min) / (max - min));
+        return array?.map((v) => (v - min) / (max - min));
     }
     const handleFilter = (filter_name) => {
         // console.log(filter_name);

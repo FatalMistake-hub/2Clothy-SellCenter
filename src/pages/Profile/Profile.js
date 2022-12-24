@@ -229,7 +229,7 @@ const Profile = () => {
                             <FormTitle>Banner shop</FormTitle>
 
                             <div className="w-full flex flex-wrap">
-                                {imageURLS.map((imageSrc, i) => (
+                                {imageURLS?.map((imageSrc, i) => (
                                     <div key={i} className="w-96 h-40 rounded mr-4 mb-4">
                                         <div className="w-full h-full ">
                                             <img src={imageSrc.path} alt="not fount" className="w-full h-full rounded border " />
@@ -277,17 +277,20 @@ const Profile = () => {
                                     placeholder="Nhập mô tả hoặc thông tin của shop bạn vào đây"
                                 />
                             </Label>
-                            {errorResponse ? <div className="">
-                    <div className="w-full bg-green-200 text-white rounded-md p-4 my-6">
-                        <p className="font-bold text-base leading-5 bg-transparent text-black">{errorResponse}</p>
-                    </div>
-                </div> : ''}
+                            {errorResponse ? (
+                                <div className="">
+                                    <div className="w-full bg-green-200 text-white rounded-md p-4 my-6">
+                                        <p className="font-bold text-base leading-5 bg-transparent text-black">{errorResponse}</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                ''
+                            )}
                             <div className="w-full">
                                 <Button type="submit" size="large" iconLeft={AddIcon}>
                                     Lưu
                                 </Button>
                             </div>
-
                         </CardBody>
                     </form>
                 </Card>

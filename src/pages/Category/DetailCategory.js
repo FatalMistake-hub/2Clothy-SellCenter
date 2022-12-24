@@ -83,7 +83,7 @@ const ProductsAll = () => {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [isModalAddOpen, setIsModalAddOpen] = useState(false);
     const [selectedDeleteProduct, setSelectedDeleteProduct] = useState(null);
-    const openModal = (productId, modal,categoryID) => {
+    const openModal = (productId, modal, categoryID) => {
         if (modal == 'del') {
             setSelectedDeleteProduct(productId);
             setIsModalDeleteOpen(true);
@@ -92,13 +92,13 @@ const ProductsAll = () => {
                 const dataAllItem = await apiService.productByCategory(categoryID);
 
                 let itemAdd = [...dataAllItem.items];
-                console.log('before',responseTable.items);
+                console.log('before', responseTable.items);
                 console.log(dataAllItem.items);
-                let result =[]
+                let result = [];
                 for (let i = 0; i < itemAdd.length; i++) {
                     if (responseTable.items.some((item) => item.name == itemAdd[i].name)) {
-                        console.log('phan tu trung nhau',itemAdd[i] , i);
-                    }else{
+                        console.log('phan tu trung nhau', itemAdd[i], i);
+                    } else {
                         result.push(itemAdd[i]);
                     }
                 }
@@ -106,7 +106,7 @@ const ProductsAll = () => {
 
                 setResponse(result);
                 const productArray = new Array(result?.length).fill(false);
-                result.map((item, i) => {
+                result?.map((item, i) => {
                     productArray[i] = item.id;
                 });
                 setAllCheck(productArray);
@@ -165,7 +165,6 @@ const ProductsAll = () => {
         const res = await addProductCategoryShop(id, listItem, history, currentUser.accessToken, axiosJWT);
         setResponseTable(res);
         setIsModalAddOpen(false);
-
     };
 
     const handleDeleteProduct = async (idProduct) => {
@@ -337,7 +336,7 @@ const ProductsAll = () => {
                                 <FormTitle>Danh sách sản phẩm</FormTitle>
                             </div>
                             <div className=" flex justify-end">
-                                <Button size="large" iconLeft={AddIcon} onClick={() => openModal(null, 'add',responseTable?.parentId)}>
+                                <Button size="large" iconLeft={AddIcon} onClick={() => openModal(null, 'add', responseTable?.parentId)}>
                                     Thêm sản phẩm
                                 </Button>
                             </div>

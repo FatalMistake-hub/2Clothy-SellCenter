@@ -127,7 +127,6 @@ const ProductsAll = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    
     const handleAddCategory = async () => {
         let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
         let dateNew = {
@@ -141,7 +140,6 @@ const ProductsAll = () => {
         const result = await addCategory(dateNew, currentUser.accessToken, axiosJWT, currentUser.shopId);
         setCategoryResult(result);
         setIsModalAddOpen(false);
-
     };
     const handleDeleteCategory = async (id) => {
         let axiosJWT = createInstance(currentUser, dispatch, AuthSlice.actions.loginSuccess);
@@ -211,11 +209,7 @@ const ProductsAll = () => {
                                             <div className="flex items-center text-sm">
                                                 <ProductIcon
                                                     className="hidden mr-4 md:block"
-                                                    src={
-                                                        category.items[0]==null
-                                                            ? category.imagePath
-                                                            : category.items[0]?.images[0].path
-                                                    }
+                                                    src={category.items[0] == null ? category.imagePath : category.items[0]?.images[0].path}
                                                     alt="Product image"
                                                 />
                                                 <div>
@@ -290,7 +284,7 @@ const ProductsAll = () => {
                             <div className="relative overflow-hidden  rounded">
                                 <div className="py-3 relative w-96 flex bg-white">
                                     <ul className=" h-80 flex-1">
-                                        {categoriesResult.map((result, i) => (
+                                        {categoriesResult?.map((result, i) => (
                                             <li
                                                 key={result.id}
                                                 className="my-2 flex justify-between leading-8 items-center px-4 hover:bg-gray-100"

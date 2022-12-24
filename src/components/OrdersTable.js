@@ -145,7 +145,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {data?.map((order, i) => (
+                        {data??.map((order, i) => (
                             <>
                                 <TableRow key={i} className="mb-4">
                                     <TableCell>
@@ -209,7 +209,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                         </div>
                                     </TableCell>
                                 </TableRow>
-                                {order.orderDetails.splice(1,order.orderDetails.length).map((orderDetails, i) => (
+                                {order.orderDetails.splice(1,order.orderDetails.length)?.map((orderDetails, i) => (
                                     <TableRow key={i}>
                                         <TableCell>
                                             <div className="flex items-center text-sm">

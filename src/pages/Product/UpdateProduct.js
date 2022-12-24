@@ -4,21 +4,8 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 import Icon from '../../components/Icon';
 import PageTitle from '../../components/Typography/PageTitle';
-import { HomeIcon, AddIcon, PublishIcon, StoreIcon,RightArrow } from '../../icons';
-import {
-    Card,
-    CardBody,
-    Label,
-    Input,
-    Textarea,
-    Button,
-    Select,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-
-} from '@windmill/react-ui';
+import { HomeIcon, AddIcon, PublishIcon, StoreIcon, RightArrow } from '../../icons';
+import { Card, CardBody, Label, Input, Textarea, Button, Select, Modal, ModalHeader, ModalBody, ModalFooter } from '@windmill/react-ui';
 import { useParams } from 'react-router-dom';
 import response from '../../utils/demo/productData';
 import * as apiService from '../../services/apiService';
@@ -57,7 +44,7 @@ const UpdateProduct = () => {
             setCategoriesResult(result);
             const dataProduct = await apiService.detailProduct(id);
 
-            UpdateProductForm.values.CategoryId = {name:dataProduct[0].categoryName, id:dataProduct[0].id};
+            UpdateProductForm.values.CategoryId = { name: dataProduct[0].categoryName, id: dataProduct[0].id };
             UpdateProductForm.values.Name = dataProduct[0].name;
             UpdateProductForm.values.Price = dataProduct[0].price;
             UpdateProductForm.values.Description = dataProduct[0].description;
@@ -200,7 +187,7 @@ const UpdateProduct = () => {
             </div>
 
             <div className="w-full mt-8 grid gap-4 grid-col md:grid-cols-3 ">
-            <Modal isOpen={isModalOpen} onClose={closeModal} style={{ width: '1000px' }}>
+                <Modal isOpen={isModalOpen} onClose={closeModal} style={{ width: '1000px' }}>
                     <ModalHeader className="flex mb-8 text-3xl ">
                         {/* <div className="flex items-center"> */}
                         {/* <Icon icon={TrashIcon} className="w-6 h-6 mr-3" /> */}
@@ -215,7 +202,7 @@ const UpdateProduct = () => {
                                 <div className="relative overflow-hidden  rounded">
                                     <div className="py-3 relative w-96 flex bg-white">
                                         <ul className=" h-80 flex-1">
-                                            {categoriesResult.map((result, i) => (
+                                            {categoriesResult?.map((result, i) => (
                                                 <li
                                                     key={result.id}
                                                     className="my-2 flex justify-between leading-8 items-center px-4 hover:bg-gray-100"
@@ -264,13 +251,12 @@ const UpdateProduct = () => {
                     </ModalFooter>
                 </Modal>
 
-
                 <Card className="row-span-4 md:col-span-4 ">
                     <form onSubmit={UpdateProductForm.handleSubmit}>
                         <CardBody>
                             <FormTitle>Hình ảnh sản phẩm</FormTitle>
                             <div className="w-full flex flex-wrap">
-                                {imageURLS.map((imageSrc, i) => (
+                                {imageURLS?.map((imageSrc, i) => (
                                     <div key={i} className="w-20 h-20 rounded mr-4 mb-4">
                                         <div className="w-full h-full ">
                                             <img src={imageSrc.path} alt="not fount" className="w-20 h-20 rounded border " />

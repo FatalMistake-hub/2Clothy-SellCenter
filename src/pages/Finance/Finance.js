@@ -165,7 +165,7 @@ const Finance = () => {
                                     </tr>
                                 </TableHeader>
                                 <TableBody>
-                                    {dataTransactional.map((history, i) => (
+                                    {dataTransactional?.map((history, i) => (
                                         <>
                                             <TableRow key={i} className="mb-4">
                                                 <TableCell>

@@ -122,7 +122,7 @@ const SingleProduct = () => {
                                 {genRating(detailResult?.rating, product?.reviews.length, 6)}
 
                                 <div className="mt-4">
-                                    {product?.reviews.map((review, i) => (
+                                    {product?.reviews?.map((review, i) => (
                                         <div className="flex py-3" key={i}>
                                             <Avatar
                                                 className="hidden mr-3 md:block"

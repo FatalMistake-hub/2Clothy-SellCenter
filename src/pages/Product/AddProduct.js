@@ -73,7 +73,7 @@ const AddProduct = () => {
     };
     function onImageChange(e) {
         const files = e.target.files;
-        console.log(files)
+        console.log(files);
         UploadImage(files, setPathURLs);
 
         let check;
@@ -182,7 +182,7 @@ const AddProduct = () => {
                                 <div className="relative overflow-hidden  rounded">
                                     <div className="py-3 relative w-96 flex bg-white">
                                         <ul className=" h-80 flex-1">
-                                            {categoriesResult.map((result, i) => (
+                                            {categoriesResult?.map((result, i) => (
                                                 <li
                                                     key={result.id}
                                                     className="my-2 flex justify-between leading-8 items-center px-4 hover:bg-gray-100"
@@ -236,7 +236,7 @@ const AddProduct = () => {
                         <CardBody>
                             <FormTitle>Hình ảnh sản phẩm</FormTitle>
                             <div className="w-full flex flex-wrap">
-                                {imageURLS.map((imageSrc, i) => (
+                                {imageURLS?.map((imageSrc, i) => (
                                     <div key={i} className="w-20 h-20 rounded mr-4 mb-4">
                                         <div className="w-full h-full ">
                                             <img src={imageSrc} alt="not fount" className="w-20 h-20 rounded border " />
