@@ -145,7 +145,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                         </tr>
                     </TableHeader>
                     <TableBody>
-                        {data??.map((order, i) => (
+                        {data?.map((order, i) => (
                             <>
                                 <TableRow key={i} className="mb-4">
                                     <TableCell>
