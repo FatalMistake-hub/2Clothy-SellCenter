@@ -106,7 +106,7 @@ const ProductsAll = () => {
 
                 setResponse(result);
                 const productArray = new Array(result?.length).fill(false);
-                result?.map((item, i) => {
+                result.map((item, i) => {
                     productArray[i] = item.id;
                 });
                 setAllCheck(productArray);
