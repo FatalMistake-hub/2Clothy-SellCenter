@@ -65,27 +65,7 @@ const Orders = () => {
                             </Select>
                         </Label>
 
-                        <Label className="mx-3 flex items-center">
-                            {/* <!-- focus-within sets the color for the icon when input is focused --> */}
-                            <p className="text-sm w-full text-gray-600 dark:text-gray-400">Ngày đặt hàng</p>
-                            <Select className="py-3" onChange={(e) => handleFilter(e.target.value)}>
-                                <option>Tất cả</option>
-                                <option>Chưa thanh toán</option>
-                                <option>Đã thanh toán</option>
-                                <option>Hoàn thành</option>
-                            </Select>
-                            {/* <div className="relative text-gray-500 focus-within:text-orange-600 dark:focus-within:text-orange-400">
-                                <input
-                                    className="py-3 pr-5 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:focus:shadow-outline-gray form-input"
-                                    value={resultsPerPage}
-                                    onChange={(e) => setResultPerPage(e.target.value)}
-                                />
-                                <div className="absolute inset-y-0 right-0 flex items-center mr-3 pointer-events-none"> */}
-                            {/* <SearchIcon className="w-5 h-5" aria-hidden="true" /> */}
-                            {/* Results on Table */}
-                            {/* </div>
-                            </div> */}
-                        </Label>
+                       
                     </div>
                 </CardBody>
             </Card>

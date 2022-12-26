@@ -150,7 +150,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                 <TableRow key={i} className="mb-4">
                                     <TableCell>
                                         {/* <TableHeader> */}
-                                        <div className="flex flex-end p-4"> Mã đơn hàng: {order.billId} </div>
+                                        <div className="flex flex-end pb-4 font-semibold text-lg text-orange-600"> {order.billId} </div>
                                         {/* </TableHeader> */}
                                         <div className="flex items-center text-sm">
                                             <ProductIcon
@@ -210,7 +210,7 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                     </TableCell>
                                 </TableRow>
                                 {order.orderDetails.splice(1,order.orderDetails.length)?.map((orderDetails, i) => (
-                                    <TableRow key={i}>
+                                    <tr className="border-none" key={i}>
                                         <TableCell>
                                             <div className="flex items-center text-sm">
                                                 <ProductIcon className="hidden mr-3 md:block" src={orderDetails.itemImg} alt="User image" />
@@ -255,11 +255,12 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                                                 <span icon={EyeIcon} className="my-2" aria-label="Preview">Đang giao</span>
                                             </div> */}
                                         </TableCell>
-                                    </TableRow>
+                                    </tr>
                                 ))}
                             </>
                         ))}
                     </TableBody>
+                </Table>
                     <TableFooter>
                         <Pagination
                             totalResults={response?.length}
@@ -268,7 +269,6 @@ const OrdersTable = ({ resultsPerPage, filter, path }) => {
                             onChange={onPageChange}
                         />
                     </TableFooter>
-                </Table>
             </TableContainer>
         </div>
     );

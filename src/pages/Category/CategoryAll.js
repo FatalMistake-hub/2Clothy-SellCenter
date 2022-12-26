@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import PageTitle from '../../components/Typography/PageTitle';
 import { Link, NavLink, useHistory } from 'react-router-dom';
 import { EditIcon, EyeIcon, GridViewIcon, HomeIcon, ListViewIcon, TrashIcon, AddIcon, RightArrow } from '../../icons';
 import {
@@ -21,7 +20,6 @@ import {
     ModalFooter,
     Input,
 } from '@windmill/react-ui';
-import response from '../../utils/demo/productData';
 import Icon from '../../components/Icon';
 import ProductIcon from '../../components/ProductIcon';
 import * as apiService from '../../services/apiService';
@@ -40,20 +38,21 @@ const ProductsAll = () => {
     // Table and grid data handlling
     const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
+    const [categoryResult, setCategoryResult] = useState();
 
     // pagination setup
     const [resultsPerPage, setResultsPerPage] = useState(10);
-    const totalResults = response.length;
+    const totalResults = categoryResult?.length;
 
     // pagination change control
     function onPageChange(p) {
         setPage(p);
     }
-
+    
     // on page change, load new sliced data
     // here you would make another server request for new data
     useEffect(() => {
-        setData(response.slice((page - 1) * resultsPerPage, page * resultsPerPage));
+        setData(categoryResult?.slice((page - 1) * resultsPerPage, page * resultsPerPage));
     }, [page, resultsPerPage]);
 
     // Delete action model
@@ -80,7 +79,6 @@ const ProductsAll = () => {
     };
 
     // const { id } = useParams();
-    const [categoryResult, setCategoryResult] = useState();
 
     const fetchApi = async () => {
         const dataCategory = await apiService.categoriesShop(currentUser.shopId);
