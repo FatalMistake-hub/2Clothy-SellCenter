@@ -44,13 +44,13 @@ const UpdateProduct = () => {
             setCategoriesResult(result);
             const dataProduct = await apiService.detailProduct(id);
 
-            UpdateProductForm.values.CategoryId = { name: dataProduct[0].categoryName, id: dataProduct[0].id };
-            UpdateProductForm.values.Name = dataProduct[0].name;
-            UpdateProductForm.values.Price = dataProduct[0].price;
-            UpdateProductForm.values.Description = dataProduct[0].description;
-            UpdateProductForm.values.Size = dataProduct[0].size;
-            setImageURLs(dataProduct[0].images);
-            setDataProduct(dataProduct[0]);
+            UpdateProductForm.values.CategoryId = { name: dataProduct.categoryName, id: dataProduct.id };
+            UpdateProductForm.values.Name = dataProduct.name;
+            UpdateProductForm.values.Price = dataProduct.price;
+            UpdateProductForm.values.Description = dataProduct.description;
+            UpdateProductForm.values.Size = dataProduct.size;
+            setImageURLs(dataProduct.images);
+            setDataProduct(dataProduct);
         };
         fetchApi();
     }, [id]);

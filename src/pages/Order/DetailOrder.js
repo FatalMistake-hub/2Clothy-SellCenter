@@ -97,7 +97,7 @@ const Orders = () => {
                             <img className="w-6 h-6 mr-1" src="https://img.icons8.com/windows/32/1A1A1A/calendar-week.png" />
                             {moment(response.dateCreated).format('LLL')}
                         </span>
-                        <span className="text-sm font-normal leading-6 mx-4">Order ID: {response.id}</span>
+                        <span className="text-sm font-normal leading-6 mx-4">Order ID: {response.billId}</span>
                     </div>
                 </div>
                 <CardBody>
@@ -114,8 +114,8 @@ const Orders = () => {
                             <div className=" flex flex-col">
                                 <h6 className="text-base font-medium leading-5">Người mua</h6>
                                 <p className="flex flex-col">
-                                    <span className="text-base font-normal leading-6">datko24</span>
-                                    <span className="text-base font-normal leading-6">datko24@example.com</span>
+                                    <span className="text-base font-normal leading-6">{response.nameOrder}</span>
+                                    {/* <span className="text-base font-normal leading-6">datko24@example.com</span> */}
                                 </p>
                             </div>
                         </div>
@@ -145,7 +145,7 @@ const Orders = () => {
                                 <h6 className="text-base font-medium leading-5">Hình thức thanh toán</h6>
                                 <p className="flex flex-col">
                                     <span className="text-base font-normal leading-6">{response.paymentName}</span>
-                                    <span className="text-base font-normal leading-6">datko24@example.com</span>
+                                    {/* <span className="text-base font-normal leading-6">datko24@example.com</span> */}
                                 </p>
                             </div>
                         </div>

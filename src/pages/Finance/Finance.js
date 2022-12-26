@@ -158,8 +158,9 @@ const Finance = () => {
                             <Table>
                                 <TableHeader>
                                     <tr>
+                                        <TableCell>Mã đơn hàng</TableCell>
                                         <TableCell>Ngày</TableCell>
-                                        <TableCell>Loại giao dịch | Mô tả</TableCell>
+                                        <TableCell>Người Mua</TableCell>
                                         <TableCell>Số tiền</TableCell>
                                         <TableCell>Trạng thái</TableCell>
                                     </tr>
@@ -168,13 +169,20 @@ const Finance = () => {
                                     {dataTransactional?.map((history, i) => (
                                         <>
                                             <TableRow key={i} className="mb-4">
+                                            <TableCell>
+                                                    <div className="flex items-center text-sm">
+                                                        <div>
+                                                            <p className="font-semibold">{history.billId}</p>
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
                                                 <TableCell>
                                                     <span className="text-sm">{moment(history.transactionDate).format('L')}</span>
                                                 </TableCell>
                                                 <TableCell>
                                                     <div className="flex items-center text-sm">
                                                         <div>
-                                                            <p className="font-semibold">{history.shopName}</p>
+                                                            <p className="font-semibold">{history.customerName}</p>
                                                         </div>
                                                     </div>
                                                 </TableCell>
