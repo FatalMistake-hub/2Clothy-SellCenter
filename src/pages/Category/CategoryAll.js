@@ -38,7 +38,7 @@ const ProductsAll = () => {
     // Table and grid data handlling
     const [page, setPage] = useState(1);
     const [data, setData] = useState([]);
-    const [categoryResult, setCategoryResult] = useState();
+    const [categoryResult, setCategoryResult] = useState([]);
 
     // pagination setup
     const [resultsPerPage, setResultsPerPage] = useState(10);
@@ -205,11 +205,11 @@ const ProductsAll = () => {
                                     <TableRow key={category.id}>
                                         <TableCell>
                                             <div className="flex items-center text-sm">
-                                                <ProductIcon
+                                                {/* <ProductIcon
                                                     className="hidden mr-4 md:block"
-                                                    src={category.items[0] == null ? category.imagePath : category.items[0]?.images[0].path}
+                                                    src={category?.items[0] == null ? category.imagePath : category?.items[0]?.images[0].path}
                                                     alt="Product image"
-                                                />
+                                                /> */}
                                                 <div>
                                                     <p className="font-semibold">{category.name}</p>
                                                 </div>

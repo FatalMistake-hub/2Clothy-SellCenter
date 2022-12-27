@@ -49,7 +49,9 @@ const UpdateProduct = () => {
             UpdateProductForm.values.Price = dataProduct.price;
             UpdateProductForm.values.Description = dataProduct.description;
             UpdateProductForm.values.Size = dataProduct.size;
+            UpdateProductForm.values.Quantity = dataProduct.quantity;
             setImageURLs(dataProduct.images);
+            // setPathURLs(dataProduct.images.map(item=>item.path));
             setDataProduct(dataProduct);
         };
         fetchApi();
@@ -131,17 +133,17 @@ const UpdateProduct = () => {
             Price: product?.Price,
             Description: product?.Description,
             Size: product?.Size,
-            // Quantity: null,
+            Quantity: null,
             Paths: [],
         },
         validationSchema: Yup.object({
-            // CategoryId: Yup.object().required('Bắt buộc!'),
-            // Name: Yup.string().required('Bắt buộc!'),
-            // Price: Yup.number().required('Bắt buộc!'),
-            // Description: Yup.string().required('Bắt buộc!'),
-            // Size: Yup.string().required('Bắt buộc!'),
-            // Paths: Yup.array().required('Bắt buộc!'),
-            // Quantity: Yup.string().required('Bắt buộc!'),
+            CategoryId: Yup.object().required('Bắt buộc!'),
+            Name: Yup.string().required('Bắt buộc!'),
+            Price: Yup.number().required('Bắt buộc!'),
+            Description: Yup.string().required('Bắt buộc!'),
+            Size: Yup.string().required('Bắt buộc!'),
+            Paths: Yup.array().required('Bắt buộc!'),
+            Quantity: Yup.string().required('Bắt buộc!'),
         }),
         onSubmit: (values) => {
             const newProduct = {
@@ -152,7 +154,7 @@ const UpdateProduct = () => {
                 Description: values.Description,
                 Size: values.Size,
                 Paths: pathURLS,
-                // Quantity: null,
+                Quantity: values.Quantity,
             };
             console.log('submit', newProduct);
             console.log(UpdateProductForm.errors);
@@ -344,7 +346,20 @@ const UpdateProduct = () => {
                                     rows="6"
                                 />
                             </Label>
+                            <FormTitle>Số lượng</FormTitle>
+                            <Label>
+                                <Input
+                                    id="Quantity"
+                                    name="Quantity"
+                                    value={UpdateProductForm.values.Quantity}
+                                    onChange={UpdateProductForm.handleChange}
+                                    type="number"
+                                    className="mb-4 "
+                                    placeholder="Nhập vào"
+                                />
+                            </Label>
                             <FormTitle>Giá</FormTitle>
+
                             <Label>
                                 <Input
                                     id="Price"

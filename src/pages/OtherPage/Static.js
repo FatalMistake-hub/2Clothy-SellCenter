@@ -261,10 +261,10 @@ const Customers = () => {
                                     </div>
                                     <div className="flex items-center mt-3">
                                         {data.unit === 'đ' && <label className="font-normal translate-y-2.5 ">{data.unit}</label>}
-                                        <label className="font-medium  text-xl leading-6 ml-2 ">
+                                        <label className="font-medium  text-xl leading-6 ml-1 ">
                                             {data.data.reduce(function (total, count) {
                                                 return total + count;
-                                            }, 0)}
+                                            }, 0).toLocaleString('es-ES')}
                                         </label>
                                     </div>
                                     <div className="flex mt-2">

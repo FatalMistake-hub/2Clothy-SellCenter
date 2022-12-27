@@ -230,7 +230,7 @@ const ProductsAll = () => {
                                             <div className="flex items-center text-sm">
                                                 <ProductIcon
                                                     className="hidden mr-4 md:block"
-                                                    src={product.images[0].path}
+                                                    src={product.images[0]?.path}
                                                     alt="Product image"
                                                 />
                                                 <div>

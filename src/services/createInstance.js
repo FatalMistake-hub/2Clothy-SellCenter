@@ -55,10 +55,10 @@ export const createInstance = (user, dispatch, stateSuccess) => {
             return response;
         },
         function (error) {
-            localStorage.clear();
-            alert('Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại!');
-            window.location.href = '/';
-            window.location.reload(false);
+            // localStorage.clear();
+            // alert('Lỗi request!');
+            // // window.location.href = '/';
+            // window.location.reload(false);
         },
     );
     return newInstance;
