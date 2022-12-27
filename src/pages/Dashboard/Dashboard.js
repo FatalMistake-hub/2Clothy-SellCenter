@@ -92,6 +92,8 @@ function Dashboard() {
             ];
 
             lineOptions = {
+                type: 'line',
+                responsive: true,
                 data: {
                     labels: resultStatis[0]?.labels,
                     datasets: [
@@ -129,6 +131,7 @@ function Dashboard() {
                         },
                     ],
                 },
+                height:90,
                 options: {
                     responsive: true,
                     tooltips: {
@@ -140,7 +143,7 @@ function Dashboard() {
                         intersect: true,
                     },
 
-                    scale: {
+                    scales: {
                         x: {
                             display: true,
                             scaleLabel: {

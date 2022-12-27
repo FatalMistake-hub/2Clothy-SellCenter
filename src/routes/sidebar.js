@@ -83,11 +83,11 @@ const routes = [
     //         },
     //     ],
     // },
-    {
-      path: "/logout",
-      icon: "OutlineLogoutIcon",
-      name: "Đăng xuất",
-    },
+    // {
+    //   path: "/logout",
+    //   icon: "OutlineLogoutIcon",
+    //   name: "Đăng xuất",
+    // },
 ];
 
 export default routes;
