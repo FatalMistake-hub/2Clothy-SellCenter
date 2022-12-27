@@ -140,7 +140,7 @@ function Dashboard() {
                         intersect: true,
                     },
 
-                    scales: {
+                    scale: {
                         x: {
                             display: true,
                             scaleLabel: {
@@ -197,14 +197,14 @@ function Dashboard() {
                         {isLoading ? (
                             <>
                                 {dataChart && (
-                                    <div className="w-2/4">
+                                    <div className="w-full">
                                         <ChartCard title="">
                                             <Line {...dataChart.lineOptions} />
                                             {/* <ChartLegend legends={dataChart.lineLegends} /> */}
                                         </ChartCard>
                                     </div>
                                 )}
-                                    <div className=" flex w-1/4 flex-wrap justify-between ml-12">
+                                    <div className=" flex  flex-wrap justify-between ml-12">
                                 {dataChart?.resultStatis?.map((data, i) => (
                                         <div className="w-1/2 items-center flex justify-center ">
                                             <div className="w-full">

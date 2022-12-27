@@ -104,6 +104,8 @@ const Customers = () => {
             ];
 
             lineOptions = {
+                type: 'line',
+                responsive: true,
                 data: {
                     labels: resultStatis[0]?.labels,
                     datasets: [
@@ -141,6 +143,7 @@ const Customers = () => {
                         },
                     ],
                 },
+                height:90,
                 options: {
                     responsive: true,
                     tooltips: {
@@ -206,7 +209,7 @@ const Customers = () => {
                                 </Select>
                             </Label>
 
-                            <Label className="mx-3">
+                            {/* <Label className="mx-3">
                                 <Select className="py-3">
                                     <option>Filter by Statis</option>
                                     <option>Electronics</option>
@@ -216,20 +219,19 @@ const Customers = () => {
                             </Label>
 
                             <Label className="mr-8">
-                                {/* <!-- focus-within sets the color for the icon when input is focused --> */}
                                 <div className="relative text-gray-500 focus-within:text-orange-600 dark:focus-within:text-orange-400">
                                     <input
                                         className="py-3 pr-5 text-sm text-black dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:border-orange-400 focus:outline-none focus:shadow-outline-orange dark:focus:shadow-outline-gray form-input"
                                         placeholder="Number of Results"
-                                        // value={resultsPerPage}
-                                        // onChange={(e) => setResultsPerPage(e.target.value)}
+                                        value={resultsPerPage}
+                                        onChange={(e) => setResultsPerPage(e.target.value)}
                                     />
                                     <div className="absolute inset-y-0 right-0 flex items-center mr-3 pointer-events-none">
-                                        {/* <SearchIcon className="w-5 h-5" aria-hidden="true" /> */}
-                                        {/* Results on {`${view}`} */}
+                                        <SearchIcon className="w-5 h-5" aria-hidden="true" />
+                                        Results on {`${view}`}
                                     </div>
                                 </div>
-                            </Label>
+                            </Label> */}
                         </div>
                     </div>
                 </CardBody>
@@ -258,10 +260,8 @@ const Customers = () => {
                                         </div>
                                     </div>
                                     <div className="flex items-center mt-3">
-                                        {data.data.reduce(function (total, count) {
-                                            return total + count;
-                                        }, 0) > 10000 && <label className="font-normal translate-y-2.5 ">₫</label>}
-                                        <label className="font-medium mt-1 text-xl leading-6 ml-2 ">
+                                        {data.unit === 'đ' && <label className="font-normal translate-y-2.5 ">{data.unit}</label>}
+                                        <label className="font-medium  text-xl leading-6 ml-2 ">
                                             {data.data.reduce(function (total, count) {
                                                 return total + count;
                                             }, 0)}
@@ -274,10 +274,12 @@ const Customers = () => {
                             ))}
                         </div>
                         {dataChart && (
-                            <ChartCard title="">
-                                <Line {...dataChart.lineOptions} />
-                                <ChartLegend legends={dataChart.lineLegends} />
-                            </ChartCard>
+                            
+                                    <ChartCard title="">
+                                        <Line  {...dataChart.lineOptions} />
+                                        {/* <ChartLegend legends={dataChart.lineLegends} /> */}
+                                    </ChartCard>
+                                
                         )}
                     </div>
                 </CardBody>
